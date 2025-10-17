@@ -351,7 +351,7 @@ const Users = () => {
                                 onClick={() => handleToggleStatus(user.id, user.activo)}
                                 style={{ color: user.activo ? 'var(--warning)' : 'var(--success)' }}
                                 onMouseEnter={(e) => e.target.style.color = user.activo ? '#d97706' : '#22c55e'}
-                                onMouseLeave={(e) => e.target.style.color = user.activo ? 'var(--warning)' : 'var(--success)'}}
+                                onMouseLeave={(e) => e.target.style.color = user.activo ? 'var(--warning)' : 'var(--success)'}
                                 title={user.activo ? "Desactivar" : "Activar"}
                               >
                                 {user.activo ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
