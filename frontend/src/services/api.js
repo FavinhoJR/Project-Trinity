@@ -1,6 +1,11 @@
 // Usa variable de entorno si está disponible, sino usa localhost para desarrollo
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
+// Debug: Ver qué URL se está usando
+console.log('🔧 TRINITY API URL:', API_BASE_URL);
+console.log('🔧 VITE_API_URL env:', import.meta.env.VITE_API_URL);
+console.log('🔧 Todas las env vars:', import.meta.env);
+
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
