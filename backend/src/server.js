@@ -15,7 +15,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Configuración de la base de datos con SSL para producción
+const poolConfig = {
+  connectionString: process.env.DATABASE_URL
+};
+
+// Agregar SSL si estamos en producción (Render requiere SSL)
+if (process.env.NODE_ENV === 'production') {
+  poolConfig.ssl = {
+    rejectUnauthorized: false
+  };
+}
+
+const pool = new Pool(poolConfig);
 app.set('db', pool);
 
 // Root route
