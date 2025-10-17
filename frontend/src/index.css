@@ -1406,8 +1406,8 @@ button[title]:hover::after {
   }
 }
 
-/* Mejoras para modo oscuro (preparación) */
-@media (prefers-color-scheme: dark) {
+/* Mejoras para modo oscuro (preparación) - DESHABILITADO */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #1f2937;
     --surface: #111827;
