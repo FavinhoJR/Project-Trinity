@@ -11,6 +11,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
@@ -35,9 +36,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('🔧 API_URL usado para login:', API_URL);
       console.log('Intentando login con:', { email, password });
       
-      const response = await fetch('http://localhost:4000/auth/login', {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +76,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error de conexión:', error);
-      return { success: false, error: 'Error de conexión. Verifica que el servidor esté corriendo en http://localhost:4000' };
+      return { success: false, error: `Error de conexión con ${API_URL}` };
     }
   };
 
