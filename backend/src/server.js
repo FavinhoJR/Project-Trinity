@@ -66,4 +66,8 @@ app.use('/users', authGuard, rbac(['admin']), usersRouter);
 app.use('/reports', authGuard, rbac(['admin','recepcion']), reportsRouter);
 
 const port = process.env.PORT || 4000;
-app.listen(port, () => console.log(`API running on http://localhost:${port}`));
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+app.listen(port, host, () => {
+  console.log(`API running on http://${host}:${port}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+});
