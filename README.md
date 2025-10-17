@@ -1,216 +1,328 @@
-# TRINITY — Sistema Completo de Gestión de Salón
+# TRINITY - Sistema de Gestión de Salón de Belleza
 
-## 🚀 Características
+## 📋 Descripción del Proyecto
 
-### ✅ Sistema Completo
-- **Dashboard** con estadísticas en tiempo real
-- **Gestión de Citas** con prevención de conflictos
-- **Gestión de Clientes** con historial completo
-- **Gestión de Servicios** con categorías y precios
-- **Gestión de Usuarios** con roles y permisos
-- **Reportes y Analytics** detallados
-- **Autenticación JWT** con control de acceso basado en roles
+**TRINITY** es un sistema completo de gestión para salones de belleza desarrollado con tecnologías modernas. El sistema permite gestionar clientes, servicios, citas, usuarios y generar reportes detallados para optimizar la operación del negocio.
 
-### 🔐 Roles del Sistema
-- **Admin**: Acceso completo al sistema
-- **Recepción**: Gestión de clientes, citas y servicios
-- **Estilista**: Ver y gestionar sus propias citas
+## 🚀 Características Principales
 
-### 🛠 Stack Tecnológico
-- **Backend**: Node.js + Express + PostgreSQL
-- **Frontend**: React + Vite + CSS moderno
-- **Base de Datos**: PostgreSQL con triggers para validaciones
-- **Infraestructura**: Docker + Docker Compose
+### ✅ Funcionalidades Implementadas
 
-## 📋 Requisitos
-- Docker Desktop / Docker Engine
-- Node 18+
+- **🔐 Sistema de Autenticación**
+  - Login seguro con JWT
+  - Roles de usuario (Admin, Recepción, Estilista)
+  - Control de acceso basado en roles (RBAC)
 
-## 🚀 Instalación y Arranque
+- **👥 Gestión de Clientes**
+  - CRUD completo de clientes
+  - Información detallada (contacto, dirección, notas)
+  - Historial de citas y gastos
+  - Búsqueda y filtrado avanzado
 
-### 1) Iniciar la Base de Datos
-```bash
-docker compose up -d
-```
-> **PostgreSQL**: localhost:5432 / trinity:trinity / DB: trinity  
-> **Adminer**: http://localhost:8080 (System: PostgreSQL, Server: db, User: trinity, Password: trinity, Database: trinity)
+- **✂️ Gestión de Servicios**
+  - Catálogo de servicios con precios
+  - Categorización por tipo de servicio
+  - Control de disponibilidad (activo/inactivo)
+  - Estadísticas de servicios más populares
 
-La base de datos se inicializa automáticamente con:
-- Esquema completo con triggers de validación
-- Usuarios de prueba
-- Clientes y servicios de ejemplo
+- **📅 Gestión de Citas**
+  - Programación de citas con estilistas
+  - Estados de cita (pendiente, confirmada, completada, cancelada)
+  - Asignación de múltiples servicios por cita
+  - Vista de calendario y agenda
 
-### 2) Backend API
-```bash
-cd backend
-npm i
-npm run dev
-```
-> **API**: http://localhost:4000
-> **Health Check**: http://localhost:4000/health
+- **👤 Gestión de Usuarios**
+  - Administración de usuarios del sistema
+  - Asignación de roles y permisos
+  - Cambio de contraseñas
+  - Control de estado (activo/inactivo)
 
-### 3) Frontend Web
-```bash
-cd ../frontend
-npm i
-npm run dev
-```
-> **Aplicación Web**: http://localhost:5173
+- **📊 Sistema de Reportes**
+  - Dashboard con estadísticas en tiempo real
+  - Reportes de ingresos por período
+  - Análisis de clientes más frecuentes
+  - Exportación de datos a CSV
+  - Servicios más populares
 
-## 👥 Usuarios de Prueba
+- **💰 Moneda Guatemalteca**
+  - Formateo en Quetzales (GTQ)
+  - Configuración regional para Guatemala
+  - Cálculos precisos de precios
 
-| Rol | Email | Contraseña | Permisos |
-|-----|-------|------------|----------|
-| Admin | admin@trinity.local | admin | Acceso completo |
-| Recepción | recepcion@trinity.local | admin | Clientes, citas, servicios |
-| Estilista | stylist@trinity.local | admin | Sus propias citas |
+## 🛠️ Tecnologías Utilizadas
 
-## 🔧 API Endpoints
+### Backend
+- **Node.js** - Runtime de JavaScript
+- **Express.js** - Framework web
+- **PostgreSQL** - Base de datos relacional
+- **JWT** - Autenticación y autorización
+- **bcryptjs** - Encriptación de contraseñas
+- **CORS** - Configuración de acceso cruzado
 
-### Autenticación
-- `POST /auth/login` - Iniciar sesión
+### Frontend
+- **React 18** - Biblioteca de interfaz de usuario
+- **Vite** - Herramienta de construcción
+- **React Router** - Enrutamiento
+- **Lucide React** - Iconografía
+- **CSS3** - Estilos personalizados
 
-### Clientes
-- `GET /customers` - Listar clientes (con paginación y búsqueda)
-- `GET /customers/:id` - Obtener cliente específico
-- `POST /customers` - Crear cliente
-- `PUT /customers/:id` - Actualizar cliente
-- `DELETE /customers/:id` - Eliminar cliente
+### Despliegue
+- **Render** - Plataforma de hosting
+- **PostgreSQL en Render** - Base de datos en la nube
+- **GitHub** - Control de versiones
 
-### Citas
-- `GET /appointments` - Listar citas (con filtros avanzados)
-- `GET /appointments/:id` - Obtener cita específica
-- `POST /appointments` - Crear cita
-- `PUT /appointments/:id` - Actualizar cita
-- `DELETE /appointments/:id` - Cancelar/Eliminar cita
-- `GET /appointments/calendar/:year/:month` - Vista calendario
-
-### Servicios
-- `GET /services` - Listar servicios
-- `GET /services/:id` - Obtener servicio específico
-- `POST /services` - Crear servicio
-- `PUT /services/:id` - Actualizar servicio
-- `DELETE /services/:id` - Eliminar servicio
-- `GET /services/categories/list` - Listar categorías
-
-### Usuarios
-- `GET /users` - Listar usuarios (solo admin)
-- `GET /users/stylists` - Listar estilistas activos
-- `POST /users` - Crear usuario
-- `PUT /users/:id` - Actualizar usuario
-- `DELETE /users/:id` - Eliminar usuario
-
-### Reportes
-- `GET /reports/dashboard` - Estadísticas del dashboard
-- `GET /reports/revenue` - Reporte de ingresos
-- `GET /reports/appointments` - Reporte de citas
-- `GET /reports/clients` - Reporte de clientes
-
-## 🗄 Base de Datos
-
-### Características Avanzadas
-- **Triggers automáticos** para prevenir solapamiento de citas
-- **Validaciones a nivel de BD** para integridad de datos
-- **Índices optimizados** para consultas rápidas
-- **Datos persistentes** con volúmenes Docker
-
-### Tablas Principales
-- `users` - Usuarios del sistema con roles
-- `clientes` - Información de clientes
-- `servicios` - Catálogo de servicios con precios
-- `citas` - Reservas con validación de conflictos
-- `servicio_citas` - Relación servicios-citas (N:M)
-
-## 🎨 Frontend Moderno
-
-### Características de UI
-- **Diseño responsive** para móviles y desktop
-- **Sidebar navegable** con roles dinámicos
-- **Componentes reutilizables** (Modal, Alert, StatusBadge)
-- **Sistema de autenticación** con JWT
-- **Gestión de estado** con Context API
-- **Formularios avanzados** con validación
-
-### Páginas Implementadas
-- **Login** - Autenticación con usuarios de prueba
-- **Dashboard** - Estadísticas y resumen ejecutivo
-- **Citas** - Gestión completa con filtros y modal
-- **Clientes** - CRUD completo (placeholder)
-- **Servicios** - Gestión de catálogo (placeholder)
-- **Usuarios** - Administración de empleados (placeholder)
-- **Reportes** - Analytics y estadísticas (placeholder)
-
-## 🔒 Seguridad
-
-- **JWT Tokens** con expiración de 8 horas
-- **Contraseñas hasheadas** con bcrypt
-- **Control de acceso** basado en roles (RBAC)
-- **Validación de entrada** en frontend y backend
-- **Protección CORS** configurada
-
-## 📊 Funcionalidades Avanzadas
-
-### Gestión Inteligente de Horarios
-- Prevención automática de solapamiento de citas
-- Validación en tiempo real de disponibilidad
-- Cálculo automático de duración basado en servicios
-
-### Sistema de Reportes
-- Dashboard con métricas clave
-- Reportes de ingresos por período
-- Análisis de rendimiento por estilista
-- Estadísticas de clientes frecuentes
-
-### Experiencia de Usuario
-- Interfaz intuitiva y moderna
-- Navegación contextual por roles
-- Feedback visual inmediato
-- Responsive design para todos los dispositivos
-
-## 🚀 Próximas Funcionalidades
-
-Las siguientes características están planificadas para futuras versiones:
-
-- [ ] **Vista de Calendario Visual** - Interfaz tipo calendario para gestión de citas
-- [ ] **Sistema de Notificaciones** - Recordatorios automáticos por email/SMS
-- [ ] **Módulo de Inventario** - Gestión de productos y stock
-- [ ] **Sistema de Pagos** - Integración con pasarelas de pago
-- [ ] **App Móvil** - Aplicación nativa para clientes
-- [ ] **Integración WhatsApp** - Confirmaciones y recordatorios
-- [ ] **Backup Automático** - Respaldos programados de la BD
-- [ ] **Multi-sucursal** - Gestión de múltiples ubicaciones
-
-## 🛠 Desarrollo
+## 🏗️ Arquitectura del Sistema
 
 ### Estructura del Proyecto
 ```
 trinity_starter/
-├── backend/          # API Node.js + Express
-├── frontend/         # React + Vite
-├── db/              # Scripts SQL de inicialización
-├── docker-compose.yml
+├── backend/
+│   ├── src/
+│   │   ├── routes/          # Rutas de la API
+│   │   ├── middleware/      # Middleware de autenticación
+│   │   └── server.js        # Servidor principal
+│   ├── db/
+│   │   └── init.sql         # Esquema de base de datos
+│   ├── init-db.js           # Script de inicialización
+│   ├── seed-data.js         # Datos de ejemplo
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # Componentes reutilizables
+│   │   ├── pages/           # Páginas principales
+│   │   ├── contexts/        # Contextos de React
+│   │   ├── services/        # Servicios de API
+│   │   └── utils/           # Utilidades
+│   └── package.json
 └── README.md
 ```
 
-### Comandos de Desarrollo
-```bash
-# Reiniciar base de datos
-docker compose down -v && docker compose up -d
+### Base de Datos
+- **users** - Usuarios del sistema
+- **clientes** - Información de clientes
+- **servicios** - Catálogo de servicios
+- **citas** - Programación de citas
+- **servicio_citas** - Relación servicios-citas
 
-# Logs del backend
-cd backend && npm run dev
+## 🔧 Configuración y Despliegue
 
-# Logs del frontend
-cd frontend && npm run dev
+### Variables de Entorno
 
-# Ver logs de la base de datos
-docker compose logs db
+#### Backend (.env)
+```env
+DATABASE_URL=postgresql://usuario:password@host:port/database
+JWT_SECRET=clave_secreta_jwt
+PORT=4000
+NODE_ENV=production
 ```
 
-## 📝 Licencia
+#### Frontend (.env.production)
+```env
+VITE_API_URL=https://tu-backend.onrender.com
+```
 
-Este proyecto está desarrollado como un sistema de gestión completo para salones de belleza.
+### Despliegue en Render
+
+1. **Backend (Web Service)**
+   - Conectar repositorio GitHub
+   - Configurar variables de entorno
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+
+2. **Frontend (Static Site)**
+   - Conectar repositorio GitHub
+   - Build Command: `npm run build`
+   - Publish Directory: `dist`
+   - Configurar variable `VITE_API_URL`
+
+3. **Base de Datos PostgreSQL**
+   - Crear instancia en Render
+   - Configurar SSL
+   - Ejecutar scripts de inicialización
+
+## 👥 Roles y Permisos
+
+### Administrador
+- Acceso completo al sistema
+- Gestión de usuarios
+- Configuración de servicios
+- Acceso a todos los reportes
+
+### Recepción
+- Gestión de clientes
+- Programación de citas
+- Gestión de servicios
+- Reportes básicos
+
+### Estilista
+- Vista de sus citas asignadas
+- Actualización de estado de citas
+- Dashboard personalizado
+
+## 🎨 Diseño y UX
+
+### Características de la Interfaz
+- **Diseño Responsivo** - Adaptable a móviles y tablets
+- **Tema Moderno** - Interfaz limpia y profesional
+- **Navegación Intuitiva** - Menú lateral con iconografía clara
+- **Feedback Visual** - Alertas, loading states y confirmaciones
+- **Accesibilidad** - Cumple estándares de accesibilidad web
+
+### Paleta de Colores
+- **Primario**: Azul (#3b82f6)
+- **Secundario**: Gris (#64748b)
+- **Éxito**: Verde (#10b981)
+- **Advertencia**: Amarillo (#f59e0b)
+- **Error**: Rojo (#ef4444)
+
+## 📱 Funcionalidades por Módulo
+
+### Dashboard
+- Estadísticas generales del salón
+- Citas recientes
+- Servicios más populares
+- Estilistas destacados
+- Métricas de ingresos
+
+### Clientes
+- Lista paginada de clientes
+- Búsqueda por nombre, teléfono o email
+- Formulario de creación/edición
+- Historial de citas por cliente
+- Total gastado por cliente
+
+### Servicios
+- Catálogo en formato de tarjetas
+- Filtros por categoría y estado
+- Precios en Quetzales
+- Duración estimada
+- Estadísticas de uso
+
+### Citas
+- Vista de calendario
+- Filtros por estilista y estado
+- Asignación de múltiples servicios
+- Notas y observaciones
+- Estados de seguimiento
+
+### Usuarios
+- Gestión completa de usuarios
+- Asignación de roles
+- Cambio de contraseñas
+- Control de estado
+- Protección contra auto-eliminación
+
+### Reportes
+- Dashboard con métricas clave
+- Filtros por período
+- Exportación a CSV
+- Análisis de tendencias
+- Reportes de ingresos
+
+## 🔒 Seguridad
+
+### Medidas Implementadas
+- **Autenticación JWT** - Tokens seguros con expiración
+- **Encriptación de Contraseñas** - bcrypt con salt
+- **Control de Acceso** - RBAC por roles
+- **Validación de Entrada** - Sanitización de datos
+- **CORS Configurado** - Control de dominios permitidos
+- **SSL/TLS** - Conexiones encriptadas en producción
+
+## 🚀 Rendimiento
+
+### Optimizaciones
+- **Lazy Loading** - Carga bajo demanda de componentes
+- **Paginación** - Manejo eficiente de grandes datasets
+- **Caché de Datos** - Reducción de llamadas a API
+- **Compresión** - Assets optimizados
+- **CDN** - Entrega rápida de recursos estáticos
+
+## 📊 Métricas y Analytics
+
+### Datos Recopilados
+- Total de clientes registrados
+- Citas programadas vs completadas
+- Ingresos por período
+- Servicios más demandados
+- Rendimiento por estilista
+- Tendencias temporales
+
+## 🔄 Mantenimiento
+
+### Tareas Regulares
+- **Backup de Base de Datos** - Respaldo automático en Render
+- **Actualización de Dependencias** - Seguridad y nuevas características
+- **Monitoreo de Rendimiento** - Métricas de uso y errores
+- **Limpieza de Datos** - Archivo de registros antiguos
+
+## 🆘 Soporte y Troubleshooting
+
+### Problemas Comunes
+
+1. **Error de Conexión a Base de Datos**
+   - Verificar variables de entorno
+   - Confirmar configuración SSL
+   - Revisar logs de Render
+
+2. **Problemas de Autenticación**
+   - Verificar JWT_SECRET
+   - Confirmar expiración de tokens
+   - Revisar configuración CORS
+
+3. **Errores de Build**
+   - Verificar versiones de Node.js
+   - Limpiar caché de npm
+   - Revisar dependencias
+
+## 📈 Roadmap Futuro
+
+### Mejoras Planificadas
+- **Notificaciones Push** - Recordatorios de citas
+- **Integración de Pagos** - Procesamiento de pagos en línea
+- **App Móvil** - Aplicación nativa para estilistas
+- **IA y Analytics** - Predicciones y recomendaciones
+- **Integración con Redes Sociales** - Marketing automatizado
+
+## 👨‍💻 Desarrollo
+
+### Comandos Útiles
+
+```bash
+# Backend
+npm run dev          # Desarrollo con hot reload
+npm run start        # Producción
+npm run init-db      # Inicializar base de datos
+npm run seed         # Agregar datos de ejemplo
+
+# Frontend
+npm run dev          # Servidor de desarrollo
+npm run build        # Build para producción
+npm run preview      # Preview del build
+```
+
+### Estructura de Commits
+```
+feat: nueva funcionalidad
+fix: corrección de bug
+docs: documentación
+style: formato de código
+refactor: refactorización
+test: pruebas
+chore: tareas de mantenimiento
+```
+
+## 📞 Contacto y Soporte
+
+Para soporte técnico o consultas sobre el proyecto:
+- **Email**: soporte@trinity-salon.com
+- **Documentación**: [Wiki del Proyecto]
+- **Issues**: [GitHub Issues]
 
 ---
 
-**TRINITY** - Sistema Profesional de Gestión de Salón de Belleza 💄✂️
+## 🎉 Conclusión
+
+TRINITY es un sistema completo y moderno para la gestión de salones de belleza, diseñado con las mejores prácticas de desarrollo web. Su arquitectura escalable, interfaz intuitiva y funcionalidades robustas lo convierten en la solución ideal para optimizar la operación de cualquier salón de belleza.
+
+**¡Gracias por elegir TRINITY para tu salón de belleza!** ✨

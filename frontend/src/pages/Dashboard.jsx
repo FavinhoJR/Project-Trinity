@@ -15,6 +15,7 @@ import Alert from '../components/Common/Alert';
 import StatusBadge from '../components/Common/StatusBadge';
 import apiService from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatCurrency } from '../utils/currency';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -126,7 +127,7 @@ const Dashboard = () => {
           />
           <StatCard
             title="Ingresos (30 días)"
-            value={`$${stats.ingresos?.ingresos_totales || 0}`}
+            value={formatCurrency(stats.ingresos?.ingresos_totales || 0)}
             icon={DollarSign}
             color="bg-yellow-500"
           />
@@ -226,7 +227,7 @@ const Dashboard = () => {
                     <div key={index} className="flex items-center justify-between">
                       <div>
                         <p className="font-medium text-sm">{servicio.nombre}</p>
-                        <p className="text-xs text-gray-500">${servicio.precio}</p>
+                        <p className="text-xs text-gray-500">{formatCurrency(servicio.precio)}</p>
                       </div>
                       <span className="text-sm font-semibold text-blue-600">
                         {servicio.total_citas} citas
@@ -248,7 +249,7 @@ const Dashboard = () => {
                     <div key={index} className="flex items-center justify-between">
                       <div>
                         <p className="font-medium text-sm">{estilista.nombre || estilista.email}</p>
-                        <p className="text-xs text-gray-500">${estilista.ingresos_generados}</p>
+                        <p className="text-xs text-gray-500">{formatCurrency(estilista.ingresos_generados)}</p>
                       </div>
                       <span className="text-sm font-semibold text-purple-600">
                         {estilista.total_citas} citas
