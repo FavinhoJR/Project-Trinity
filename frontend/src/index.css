@@ -11,36 +11,36 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
-  color: #1e293b;
+  background-color: var(--background);
+  color: var(--text);
   line-height: 1.5;
 }
 
 /* Variables CSS - Paleta neutros elegantes con acentos metálicos */
 :root {
-  /* Acento principal (oro suave) */
-  --primary: #b88a44;
-  --primary-dark: #8c6a2b;
-  --primary-light: #f4e7d3;
+  /* Acento principal (oro suave más claro) */
+  --primary: #d4af37;
+  --primary-dark: #b8941f;
+  --primary-light: #f7f0d9;
 
-  /* Neutros elegantes */
-  --secondary: #6b7280;
-  --background: #fafaf8; /* marfil */
-  --surface: #ffffff;    /* blanco */
-  --border: #e5e1d8;     /* gris/beige claro */
-  --text: #1f2937;       /* gris carbón */
-  --text-muted: #6b7280; /* gris medio */
+  /* Neutros elegantes más claros */
+  --secondary: #8b8b8b;
+  --background: #fefefe;     /* blanco casi puro */
+  --surface: #ffffff;        /* blanco puro */
+  --border: #f0f0f0;         /* gris muy claro */
+  --text: #2d2d2d;           /* gris oscuro suave */
+  --text-muted: #7a7a7a;     /* gris medio claro */
 
-  /* Estados */
-  --success: #16a34a;
-  --warning: #d97706;
-  --error: #dc2626;
+  /* Estados más suaves */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
 
-  /* Estética */
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 12px 18px -6px rgb(0 0 0 / 0.12), 0 6px 10px -6px rgb(0 0 0 / 0.10);
+  /* Estética más suave */
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 8px 16px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.06);
   --radius: 0.5rem;
-  --trinity-brand: #a07a3a;
+  --trinity-brand: #c9a96e;
 }
 
 /* Utilidades */
@@ -154,7 +154,7 @@ body {
 
 /* Componentes base */
 .card {
-  background: var(--background);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -1237,7 +1237,7 @@ body {
 }
 
 .table tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: var(--primary-light);
 }
 
 /* Mejoras para modales */
