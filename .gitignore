@@ -107,3 +107,19 @@ logs
 # Temporary files
 tmp/
 temp/
+
+# Guías y documentación de despliegue (solo para uso local)
+EMPIEZA_AQUI_FAVIO.md
+INSTRUCCIONES_INSTALACION.md
+VERIFICACION_ENTORNO.md
+COMANDOS_WINDOWS.md
+PASOS_RAPIDOS_RENDER.md
+GUIA_DESPLIEGUE_RENDER.md
+RESUMEN_ARCHIVOS_CREADOS.md
+INSTRUCCIONES_FINALES.md
+README_DESPLIEGUE.md
+INDICE_GUIAS.md
+
+# Test reports (opcional, si no quieres subirlos)
+frontend/playwright-report/
+frontend/test-results/

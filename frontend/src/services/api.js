@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:4000';
+// Usa variable de entorno si está disponible, sino usa localhost para desarrollo
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 class ApiService {
   constructor() {
