@@ -7,6 +7,7 @@ import StatusBadge from '../components/Common/StatusBadge';
 import Modal from '../components/Common/Modal';
 import apiService from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatCurrency } from '../utils/currency';
 
 const Appointments = () => {
   const { user, hasRole } = useAuth();
@@ -294,7 +295,7 @@ const Appointments = () => {
                     </td>
                     <td>
                       <span className="font-medium">
-                        ${appointment.precio_total || 0}
+                        {formatCurrency(appointment.precio_total || 0)}
                       </span>
                     </td>
                     {hasRole(['admin', 'recepcion']) && (
@@ -425,7 +426,7 @@ const Appointments = () => {
                       }}
                     />
                     <span className="text-sm">
-                      {service.nombre} (${service.precio})
+                      {service.nombre} ({formatCurrency(service.precio)})
                     </span>
                   </label>
                 ))}
