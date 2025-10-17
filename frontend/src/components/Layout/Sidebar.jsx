@@ -107,9 +107,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
         {/* User info */}
         <div className="p-4 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--surface)' }}>
-              <span className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
-                {user?.email?.charAt(0).toUpperCase()}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden" style={{ backgroundColor: 'var(--primary-light)', border: '1px solid var(--border)' }}>
+              <span className="text-sm font-semibold" style={{ color: 'var(--primary)' }}>
+                {user?.email?.charAt(0).toUpperCase() || 'U'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
