@@ -16,24 +16,31 @@ body {
   line-height: 1.5;
 }
 
-/* Variables CSS */
+/* Variables CSS - Paleta neutros elegantes con acentos metálicos */
 :root {
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --primary-light: #dbeafe;
-  --secondary: #64748b;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --background: #ffffff;
-  --surface: #f8fafc;
-  --border: #e2e8f0;
-  --text: #1e293b;
-  --text-muted: #64748b;
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Acento principal (oro suave) */
+  --primary: #b88a44;
+  --primary-dark: #8c6a2b;
+  --primary-light: #f4e7d3;
+
+  /* Neutros elegantes */
+  --secondary: #6b7280;
+  --background: #fafaf8; /* marfil */
+  --surface: #ffffff;    /* blanco */
+  --border: #e5e1d8;     /* gris/beige claro */
+  --text: #1f2937;       /* gris carbón */
+  --text-muted: #6b7280; /* gris medio */
+
+  /* Estados */
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #dc2626;
+
+  /* Estética */
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 12px 18px -6px rgb(0 0 0 / 0.12), 0 6px 10px -6px rgb(0 0 0 / 0.10);
   --radius: 0.5rem;
-  --trinity-brand: #1e40af;
+  --trinity-brand: #a07a3a;
 }
 
 /* Utilidades */
