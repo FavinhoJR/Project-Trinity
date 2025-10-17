@@ -178,7 +178,7 @@ const Services = () => {
         {success && <Alert type="success" message={success} onClose={() => setSuccess('')} />}
 
         {/* Search and Filters */}
-        <div className="card">
+      <div className="card">
           <div className="p-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="flex-1 max-w-md">
@@ -252,7 +252,7 @@ const Services = () => {
                         onClick={() => handleToggleStatus(service.id, service.activo)}
                         style={{ color: service.activo ? 'var(--warning)' : 'var(--success)' }}
                         onMouseEnter={(e) => e.target.style.color = service.activo ? '#d97706' : '#22c55e'}
-                        onMouseLeave={(e) => e.target.style.color = service.activo ? 'var(--warning)' : 'var(--success)'}}
+                        onMouseLeave={(e) => e.target.style.color = service.activo ? 'var(--warning)' : 'var(--success)'}
                         title={service.activo ? "Desactivar" : "Activar"}
                       >
                         {service.activo ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
