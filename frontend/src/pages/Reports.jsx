@@ -4,6 +4,7 @@ import Layout from '../components/Layout/Layout';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
 import apiService from '../services/api';
+import { formatCurrency } from '../utils/currency';
 
 const Reports = () => {
   const [loading, setLoading] = useState(true);
@@ -63,13 +64,6 @@ const Reports = () => {
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-GT', {
-      style: 'currency',
-      currency: 'GTQ'
-    }).format(amount || 0);
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('es-GT');
@@ -77,13 +71,13 @@ const Reports = () => {
 
   const exportToCSV = (data, filename) => {
     if (!data || data.length === 0) return;
-    
+
     const headers = Object.keys(data[0]);
     const csvContent = [
       headers.join(','),
       ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
     ].join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -97,14 +91,14 @@ const Reports = () => {
     <div className="card">
       <div className="p-6">
         <div className="flex items-center">
-          <div className={`p-3 rounded-full bg-${color}-100`}>
-            <Icon className={`w-6 h-6 text-${color}-600`} />
+          <div className="p-3 rounded-full" style={{ backgroundColor: 'var(--primary-light)' }}>
+            <Icon className="w-6 h-6" style={{ color: 'var(--primary)' }} />
           </div>
           <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">{title}</p>
-            <p className="text-2xl font-semibold text-gray-900">{value}</p>
+            <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>{title}</p>
+            <p className="text-2xl font-semibold" style={{ color: 'var(--text)' }}>{value}</p>
             {trend && (
-              <p className={`text-sm ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <p className="text-sm" style={{ color: trend > 0 ? 'var(--success)' : 'var(--error)' }}>
                 {trend > 0 ? '+' : ''}{trend}% vs período anterior
               </p>
             )}
@@ -120,8 +114,8 @@ const Reports = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Reportes y Estadísticas</h1>
-            <p className="text-gray-600">Análisis detallado del rendimiento del salón</p>
+            <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Reportes y Estadísticas</h1>
+            <p style={{ color: 'var(--text-muted)' }}>Análisis detallado del rendimiento del salón</p>
           </div>
         </div>
 
@@ -132,12 +126,12 @@ const Reports = () => {
         <div className="card">
           <div className="p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Filter className="w-5 h-5 text-gray-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Filtros</h3>
+              <Filter className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
+              <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Filtros</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Período Rápido
                 </label>
                 <select
@@ -152,7 +146,7 @@ const Reports = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Fecha Desde
                 </label>
                 <input
@@ -163,7 +157,7 @@ const Reports = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Fecha Hasta
                 </label>
                 <input
@@ -174,7 +168,7 @@ const Reports = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Estilista
                 </label>
                 <select
@@ -221,180 +215,147 @@ const Reports = () => {
               icon={Calendar}
               color="orange"
             />
-          </div>
-        ) : null}
-
-        {/* Detailed Stats */}
-        {dashboardStats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard
-              title="Citas Pendientes"
-              value={dashboardStats.citas_pendientes || 0}
-              icon={Calendar}
-              color="yellow"
-            />
-            <StatCard
-              title="Citas Confirmadas"
-              value={dashboardStats.citas_confirmadas || 0}
-              icon={Calendar}
-              color="blue"
-            />
-            <StatCard
-              title="Citas Completadas"
-              value={dashboardStats.citas_completadas_periodo || 0}
-              icon={Calendar}
-              color="green"
-            />
-            <StatCard
-              title="Citas Canceladas"
-              value={dashboardStats.citas_canceladas_periodo || 0}
-              icon={Calendar}
-              color="red"
-            />
-          </div>
-        )}
-
-        {/* Revenue Stats */}
-        {dashboardStats?.ingresos_totales !== undefined && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
               title="Ingresos Totales"
-              value={formatCurrency(dashboardStats.ingresos_totales)}
+              value={formatCurrency(dashboardStats.ingresos_periodo || 0)}
               icon={DollarSign}
               color="green"
             />
             <StatCard
-              title="Ingreso Promedio por Cita"
-              value={formatCurrency(dashboardStats.ingreso_promedio_cita)}
+              title="Promedio por Cita"
+              value={formatCurrency(dashboardStats.promedio_por_cita || 0)}
               icon={TrendingUp}
               color="blue"
             />
             <StatCard
-              title="Citas Facturadas"
-              value={dashboardStats.citas_facturadas || 0}
+              title="Tasa de Ocupación"
+              value={`${dashboardStats.tasa_ocupacion || 0}%`}
               icon={BarChart3}
               color="purple"
             />
+            <StatCard
+              title="Clientes Nuevos"
+              value={dashboardStats.clientes_nuevos || 0}
+              icon={Users}
+              color="orange"
+            />
           </div>
-        )}
+        ) : null}
 
-        {/* Top Services */}
-        {dashboardStats?.top_servicios && dashboardStats.top_servicios.length > 0 && (
-          <div className="card">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Servicios Más Populares</h3>
-                <button
-                  onClick={() => exportToCSV(dashboardStats.top_servicios, 'servicios_populares.csv')}
-                  className="btn btn-sm btn-outline flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Exportar CSV
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Servicio</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Citas Realizadas</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ingresos</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">% del Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {dashboardStats.top_servicios.map((service, index) => (
-                      <tr key={index}>
-                        <td className="px-4 py-2 text-sm font-medium text-gray-900">{service.nombre}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">{service.total_citas}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">{formatCurrency(service.ingresos)}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">{service.porcentaje}%</td>
+        {/* Detailed Reports */}
+        {filters.fecha_desde && filters.fecha_hasta && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top Services */}
+            <div className="card">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Servicios Más Populares</h3>
+                  <button
+                    onClick={() => exportToCSV(dashboardStats.top_servicios, 'servicios_populares.csv')}
+                    className="btn btn-sm btn-outline flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead style={{ backgroundColor: 'var(--primary-light)' }}>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Servicio</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Citas Realizadas</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Ingresos</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>% del Total</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {dashboardStats.top_servicios.map((service, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-sm font-medium" style={{ color: 'var(--text)' }}>{service.nombre}</td>
+                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{service.total_citas}</td>
+                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{formatCurrency(service.ingresos)}</td>
+                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{service.porcentaje}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Revenue Chart Placeholder */}
-        {revenueData.length > 0 && (
-          <div className="card">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Ingresos por Día</h3>
-                <button
-                  onClick={() => exportToCSV(revenueData, 'ingresos_diarios.csv')}
-                  className="btn btn-sm btn-outline flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Exportar CSV
-                </button>
-              </div>
-              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                <p className="text-gray-500">Gráfico de ingresos (implementar con Chart.js)</p>
+            {/* Revenue Chart */}
+            <div className="card">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Ingresos por Día</h3>
+                  <button
+                    onClick={() => exportToCSV(revenueData, 'ingresos_diarios.csv')}
+                    className="btn btn-sm btn-outline flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar
+                  </button>
+                </div>
+                <div className="h-64 flex items-center justify-center rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
+                  <p style={{ color: 'var(--text-muted)' }}>Gráfico de ingresos (implementar con Chart.js)</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Appointments Chart Placeholder */}
-        {appointmentsData.length > 0 && (
-          <div className="card">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Citas por Estado</h3>
-                <button
-                  onClick={() => exportToCSV(appointmentsData, 'citas_por_estado.csv')}
-                  className="btn btn-sm btn-outline flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Exportar CSV
-                </button>
-              </div>
-              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                <p className="text-gray-500">Gráfico de citas (implementar con Chart.js)</p>
+            {/* Appointments Chart */}
+            <div className="card">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Citas por Estado</h3>
+                  <button
+                    onClick={() => exportToCSV(appointmentsData, 'citas_por_estado.csv')}
+                    className="btn btn-sm btn-outline flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar
+                  </button>
+                </div>
+                <div className="h-64 flex items-center justify-center rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
+                  <p style={{ color: 'var(--text-muted)' }}>Gráfico de citas (implementar con Chart.js)</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Clients Analysis */}
-        {clientsData.length > 0 && (
-          <div className="card">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Análisis de Clientes</h3>
-                <button
-                  onClick={() => exportToCSV(clientsData, 'analisis_clientes.csv')}
-                  className="btn btn-sm btn-outline flex items-center gap-2"
-                >
-                  <Download className="w-4 h-4" />
-                  Exportar CSV
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total Gastado</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Citas Realizadas</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Última Visita</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {clientsData.map((client, index) => (
-                      <tr key={index}>
-                        <td className="px-4 py-2 text-sm font-medium text-gray-900">{client.nombre}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">{formatCurrency(client.total_gastado)}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">{client.total_citas}</td>
-                        <td className="px-4 py-2 text-sm text-gray-600">{formatDate(client.ultima_visita)}</td>
+            {/* Client Analysis */}
+            <div className="card">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Análisis de Clientes</h3>
+                  <button
+                    onClick={() => exportToCSV(clientsData, 'analisis_clientes.csv')}
+                    className="btn btn-sm btn-outline flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead style={{ backgroundColor: 'var(--primary-light)' }}>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Cliente</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Total Gastado</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Citas Realizadas</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Última Visita</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {clientsData.map((client, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-sm font-medium" style={{ color: 'var(--text)' }}>{client.nombre}</td>
+                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{formatCurrency(client.total_gastado)}</td>
+                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{client.total_citas}</td>
+                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{formatDate(client.ultima_visita)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

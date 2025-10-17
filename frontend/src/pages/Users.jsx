@@ -43,7 +43,7 @@ const Users = () => {
         page: currentPage,
         limit: 10
       };
-      
+
       const data = await apiService.getUsers(params);
       setUsers(data.users || []);
       setTotalPages(Math.ceil(data.total / 10));
@@ -59,7 +59,7 @@ const Users = () => {
     e.preventDefault();
     try {
       setError('');
-      
+
       if (editingUser) {
         await apiService.updateUser(editingUser.id, formData);
         setSuccess('Usuario actualizado correctamente');
@@ -67,7 +67,7 @@ const Users = () => {
         await apiService.createUser(formData);
         setSuccess('Usuario creado correctamente');
       }
-      
+
       setShowModal(false);
       setEditingUser(null);
       resetForm();
@@ -93,9 +93,9 @@ const Users = () => {
       setError('No puedes eliminar tu propio usuario');
       return;
     }
-    
+
     if (!window.confirm('¿Estás seguro de eliminar este usuario?')) return;
-    
+
     try {
       await apiService.deleteUser(userId);
       setSuccess('Usuario eliminado correctamente');
@@ -110,7 +110,7 @@ const Users = () => {
       setError('No puedes desactivar tu propio usuario');
       return;
     }
-    
+
     try {
       await apiService.updateUser(userId, { activo: !currentStatus });
       setSuccess(`Usuario ${!currentStatus ? 'activado' : 'desactivado'} correctamente`);
@@ -124,17 +124,17 @@ const Users = () => {
     e.preventDefault();
     try {
       setError('');
-      
+
       if (passwordData.newPassword !== passwordData.confirmPassword) {
         setError('Las contraseñas no coinciden');
         return;
       }
-      
+
       if (passwordData.newPassword.length < 6) {
         setError('La contraseña debe tener al menos 6 caracteres');
         return;
       }
-      
+
       await apiService.updateUserPassword(editingUser.id, passwordData.newPassword);
       setSuccess('Contraseña actualizada correctamente');
       setShowPasswordModal(false);
@@ -172,15 +172,15 @@ const Users = () => {
 
   const getRoleBadge = (role) => {
     const roleConfig = {
-      admin: { color: 'bg-red-100 text-red-800', label: 'Administrador' },
-      recepcion: { color: 'bg-blue-100 text-blue-800', label: 'Recepción' },
-      estilista: { color: 'bg-green-100 text-green-800', label: 'Estilista' }
+      admin: { backgroundColor: 'var(--error)', color: 'white', label: 'Administrador' },
+      recepcion: { backgroundColor: 'var(--primary)', color: 'white', label: 'Recepción' },
+      estilista: { backgroundColor: 'var(--success)', color: 'white', label: 'Estilista' }
     };
-    
-    const config = roleConfig[role] || { color: 'bg-gray-100 text-gray-800', label: role };
-    
+
+    const config = roleConfig[role] || { backgroundColor: 'var(--text-muted)', color: 'white', label: role };
+
     return (
-      <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${config.color}`}>
+      <span className="inline-block px-2 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: config.backgroundColor, color: config.color }}>
         {config.label}
       </span>
     );
@@ -198,8 +198,8 @@ const Users = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Usuarios</h1>
-            <p className="text-gray-600">Gestiona los usuarios del sistema</p>
+            <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Usuarios</h1>
+            <p style={{ color: 'var(--text-muted)' }}>Gestiona los usuarios del sistema</p>
           </div>
           <button
             onClick={openModal}
@@ -220,7 +220,7 @@ const Users = () => {
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="flex-1 max-w-md">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                   <input
                     type="text"
                     placeholder="Buscar usuarios..."
@@ -231,7 +231,7 @@ const Users = () => {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 text-sm text-gray-600">
+                <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
                   <input
                     type="checkbox"
                     checked={showInactive}
@@ -240,7 +240,7 @@ const Users = () => {
                   />
                   Mostrar inactivos
                 </label>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Total: {totalUsers} usuarios
                 </div>
               </div>
@@ -249,64 +249,64 @@ const Users = () => {
         </div>
 
         {/* Users Table */}
-        <div className="card">
+      <div className="card">
           <div className="overflow-x-auto">
             {loading ? (
               <div className="p-8 text-center">
                 <LoadingSpinner />
               </div>
             ) : users.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                <UserCog className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+              <div className="p-8 text-center" style={{ color: 'var(--text-muted)' }}>
+                <UserCog className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
                 <p>No se encontraron usuarios</p>
                 <p className="text-sm">Crea tu primer usuario para comenzar</p>
               </div>
             ) : (
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead style={{ backgroundColor: 'var(--primary-light)' }}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Usuario
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Email
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Rol
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Estado
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Fecha Registro
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Acciones
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y" style={{ borderColor: 'var(--border)' }}>
                   {users.map((user) => (
-                    <tr key={user.id} className={`hover:bg-gray-50 ${!user.activo ? 'opacity-60' : ''}`}>
+                    <tr key={user.id} className={`hover:bg-opacity-50 ${!user.activo ? 'opacity-60' : ''}`} style={{ backgroundColor: 'var(--surface)' }}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <UserCog className="h-5 w-5 text-gray-600" />
+                            <div className="h-10 w-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--primary-light)' }}>
+                              <UserCog className="h-5 w-5" style={{ color: 'var(--primary)' }} />
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium" style={{ color: 'var(--text)' }}>
                               {user.nombre}
                             </div>
                             {user.id === currentUser.id && (
-                              <div className="text-xs text-blue-600">(Tú)</div>
+                              <div className="text-xs" style={{ color: 'var(--primary)' }}>(Tú)</div>
                             )}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm" style={{ color: 'var(--text-muted)' }}>
                           <Mail className="w-3 h-3 mr-1" />
                           {user.email}
                         </div>
@@ -315,27 +315,32 @@ const Users = () => {
                         {getRoleBadge(user.role)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                          user.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className="inline-block px-2 py-1 text-xs font-medium rounded-full" style={{ 
+                          backgroundColor: user.activo ? 'var(--success)' : 'var(--error)', 
+                          color: 'white' 
+                        }}>
                           {user.activo ? 'Activo' : 'Inactivo'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--text-muted)' }}>
                         {formatDate(user.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
                             onClick={() => handleEdit(user)}
-                            className="text-blue-600 hover:text-blue-900"
+                            style={{ color: 'var(--primary)' }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--primary-dark)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--primary)'}
                             title="Editar"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => openPasswordModal(user)}
-                            className="text-purple-600 hover:text-purple-900"
+                            style={{ color: 'var(--primary)' }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--primary-dark)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--primary)'}
                             title="Cambiar contraseña"
                           >
                             <Key className="w-4 h-4" />
@@ -344,14 +349,18 @@ const Users = () => {
                             <>
                               <button
                                 onClick={() => handleToggleStatus(user.id, user.activo)}
-                                className={user.activo ? "text-yellow-600 hover:text-yellow-900" : "text-green-600 hover:text-green-900"}
+                                style={{ color: user.activo ? 'var(--warning)' : 'var(--success)' }}
+                                onMouseEnter={(e) => e.target.style.color = user.activo ? '#d97706' : '#22c55e'}
+                                onMouseLeave={(e) => e.target.style.color = user.activo ? 'var(--warning)' : 'var(--success)'}}
                                 title={user.activo ? "Desactivar" : "Activar"}
                               >
                                 {user.activo ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                               </button>
                               <button
                                 onClick={() => handleDelete(user.id)}
-                                className="text-red-600 hover:text-red-900"
+                                style={{ color: 'var(--error)' }}
+                                onMouseEnter={(e) => e.target.style.color = '#dc2626'}
+                                onMouseLeave={(e) => e.target.style.color = 'var(--error)'}
                                 title="Eliminar"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -369,9 +378,9 @@ const Users = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-3 border-t border-gray-200">
+            <div className="px-6 py-3 border-t" style={{ borderColor: 'var(--border)' }}>
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Página {currentPage} de {totalPages}
                 </div>
                 <div className="flex space-x-2">
@@ -404,7 +413,7 @@ const Users = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Nombre Completo *
                 </label>
                 <input
@@ -417,7 +426,7 @@ const Users = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Email *
                 </label>
                 <input
@@ -430,7 +439,7 @@ const Users = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Rol *
                 </label>
                 <select
@@ -452,7 +461,7 @@ const Users = () => {
                   onChange={(e) => setFormData({ ...formData, activo: e.target.checked })}
                   className="rounded"
                 />
-                <label htmlFor="activo" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="activo" className="ml-2 text-sm" style={{ color: 'var(--text)' }}>
                   Usuario activo
                 </label>
               </div>
@@ -479,11 +488,11 @@ const Users = () => {
           title="Cambiar Contraseña"
         >
           <form onSubmit={handleChangePassword} className="space-y-4">
-            <div className="text-sm text-gray-600 mb-4">
-              Cambiando contraseña para: <strong>{editingUser?.nombre}</strong>
+            <div className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
+              Cambiando contraseña para: <strong style={{ color: 'var(--text)' }}>{editingUser?.nombre}</strong>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                 Nueva Contraseña *
               </label>
               <input
@@ -497,7 +506,7 @@ const Users = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                 Confirmar Contraseña *
               </label>
               <input

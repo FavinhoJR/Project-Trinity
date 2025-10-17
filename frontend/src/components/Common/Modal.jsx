@@ -1,14 +1,7 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  title, 
-  children, 
-  size = 'md',
-  showCloseButton = true 
-}) => {
+const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -29,35 +22,54 @@ const Modal = ({
 
   if (!isOpen) return null;
 
-  const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl'
+  const getSizeClasses = () => {
+    switch (size) {
+      case 'sm':
+        return 'max-w-md';
+      case 'lg':
+        return 'max-w-4xl';
+      case 'xl':
+        return 'max-w-6xl';
+      default:
+        return 'max-w-2xl';
+    }
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
       <div 
-        className={`modal ${sizeClasses[size]}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {title && (
-          <div className="modal-header">
-            <h2 className="text-lg font-semibold">{title}</h2>
-            {showCloseButton && (
-              <button
-                onClick={onClose}
-                className="p-1 hover:bg-gray-100 rounded-lg"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
+        className="absolute inset-0"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className={`relative w-full ${getSizeClasses()} max-h-[90vh] overflow-y-auto`}>
+        <div className="card">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'var(--border)' }}>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--text)' }}>
+              {title}
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-lg"
+              style={{ 
+                backgroundColor: 'transparent',
+                color: 'var(--text-muted)'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--primary-light)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        )}
-        
-        <div className="modal-body">
-          {children}
+          
+          {/* Content */}
+          <div className="p-6">
+            {children}
+          </div>
         </div>
       </div>
     </div>

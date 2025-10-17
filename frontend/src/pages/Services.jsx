@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
 import Modal from '../components/Common/Modal';
 import apiService from '../services/api';
+import { formatCurrency } from '../utils/currency';
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -41,7 +42,7 @@ const Services = () => {
         page: currentPage,
         limit: 10
       };
-      
+
       const data = await apiService.getServices(params);
       setServices(data.services || []);
       setTotalPages(Math.ceil(data.total / 10));
@@ -57,13 +58,13 @@ const Services = () => {
     e.preventDefault();
     try {
       setError('');
-      
+
       const serviceData = {
         ...formData,
         precio: parseFloat(formData.precio),
         duracion_min: parseInt(formData.duracion_min)
       };
-      
+
       if (editingService) {
         await apiService.updateService(editingService.id, serviceData);
         setSuccess('Servicio actualizado correctamente');
@@ -71,7 +72,7 @@ const Services = () => {
         await apiService.createService(serviceData);
         setSuccess('Servicio creado correctamente');
       }
-      
+
       setShowModal(false);
       setEditingService(null);
       resetForm();
@@ -96,7 +97,7 @@ const Services = () => {
 
   const handleDelete = async (serviceId) => {
     if (!window.confirm('¿Estás seguro de eliminar este servicio?')) return;
-    
+
     try {
       await apiService.deleteService(serviceId);
       setSuccess('Servicio eliminado correctamente');
@@ -133,13 +134,6 @@ const Services = () => {
     setShowModal(true);
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-GT', {
-      style: 'currency',
-      currency: 'GTQ'
-    }).format(amount || 0);
-  };
-
   const formatDuration = (minutes) => {
     if (!minutes) return 'N/A';
     const hours = Math.floor(minutes / 60);
@@ -167,8 +161,8 @@ const Services = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Servicios</h1>
-            <p className="text-gray-600">Gestiona los servicios que ofreces en el salón</p>
+            <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Servicios</h1>
+            <p style={{ color: 'var(--text-muted)' }}>Gestiona los servicios que ofreces en el salón</p>
           </div>
           <button
             onClick={openModal}
@@ -189,7 +183,7 @@ const Services = () => {
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="flex-1 max-w-md">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                   <input
                     type="text"
                     placeholder="Buscar servicios..."
@@ -200,7 +194,7 @@ const Services = () => {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 text-sm text-gray-600">
+                <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
                   <input
                     type="checkbox"
                     checked={showInactive}
@@ -209,7 +203,7 @@ const Services = () => {
                   />
                   Mostrar inactivos
                 </label>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Total: {totalServices} servicios
                 </div>
               </div>
@@ -224,8 +218,8 @@ const Services = () => {
               <LoadingSpinner />
             </div>
           ) : services.length === 0 ? (
-            <div className="col-span-full text-center p-8 text-gray-500">
-              <Scissors className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <div className="col-span-full text-center p-8" style={{ color: 'var(--text-muted)' }}>
+              <Scissors className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
               <p>No se encontraron servicios</p>
               <p className="text-sm">Crea tu primer servicio para comenzar</p>
             </div>
@@ -235,11 +229,11 @@ const Services = () => {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      <h3 className="text-lg font-semibold mb-1" style={{ color: 'var(--text)' }}>
                         {service.nombre}
                       </h3>
                       {service.categoria && (
-                        <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                        <span className="inline-block px-2 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}>
                           {service.categoria}
                         </span>
                       )}
@@ -247,67 +241,73 @@ const Services = () => {
                     <div className="flex space-x-1">
                       <button
                         onClick={() => handleEdit(service)}
-                        className="text-blue-600 hover:text-blue-900"
+                        style={{ color: 'var(--primary)' }}
+                        onMouseEnter={(e) => e.target.style.color = 'var(--primary-dark)'}
+                        onMouseLeave={(e) => e.target.style.color = 'var(--primary)'}
                         title="Editar"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleToggleStatus(service.id, service.activo)}
-                        className={service.activo ? "text-yellow-600 hover:text-yellow-900" : "text-green-600 hover:text-green-900"}
+                        style={{ color: service.activo ? 'var(--warning)' : 'var(--success)' }}
+                        onMouseEnter={(e) => e.target.style.color = service.activo ? '#d97706' : '#22c55e'}
+                        onMouseLeave={(e) => e.target.style.color = service.activo ? 'var(--warning)' : 'var(--success)'}}
                         title={service.activo ? "Desactivar" : "Activar"}
                       >
                         {service.activo ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                       <button
                         onClick={() => handleDelete(service.id)}
-                        className="text-red-600 hover:text-red-900"
+                        style={{ color: 'var(--error)' }}
+                        onMouseEnter={(e) => e.target.style.color = '#dc2626'}
+                        onMouseLeave={(e) => e.target.style.color = 'var(--error)'}
                         title="Eliminar"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  
+
                   {service.descripcion && (
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    <p className="text-sm mb-4 line-clamp-2" style={{ color: 'var(--text-muted)' }}>
                       {service.descripcion}
                     </p>
                   )}
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center text-gray-600">
+                      <div className="flex items-center" style={{ color: 'var(--text-muted)' }}>
                         <DollarSign className="w-4 h-4 mr-1" />
                         Precio:
                       </div>
-                      <span className="font-semibold text-green-600">
+                      <span className="font-semibold" style={{ color: 'var(--success)' }}>
                         {formatCurrency(service.precio)}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center text-gray-600">
+                      <div className="flex items-center" style={{ color: 'var(--text-muted)' }}>
                         <Clock className="w-4 h-4 mr-1" />
                         Duración:
                       </div>
-                      <span className="font-medium">
+                      <span className="font-medium" style={{ color: 'var(--text)' }}>
                         {formatDuration(service.duracion_min)}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between text-sm">
-                      <div className="text-gray-600">
+                      <div style={{ color: 'var(--text-muted)' }}>
                         Citas realizadas:
                       </div>
-                      <span className="font-medium">
+                      <span className="font-medium" style={{ color: 'var(--text)' }}>
                         {service.total_citas_realizadas || 0}
                       </span>
                     </div>
                   </div>
-                  
+
                   {!service.activo && (
-                    <div className="mt-3 px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full text-center">
+                    <div className="mt-3 px-2 py-1 text-xs rounded-full text-center" style={{ backgroundColor: 'var(--error)', color: 'white' }}>
                       Servicio inactivo
                     </div>
                   )}
@@ -322,7 +322,7 @@ const Services = () => {
           <div className="card">
             <div className="p-4">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Página {currentPage} de {totalPages}
                 </div>
                 <div className="flex space-x-2">
@@ -355,7 +355,7 @@ const Services = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Nombre del Servicio *
                 </label>
                 <input
@@ -368,7 +368,7 @@ const Services = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Categoría
                 </label>
                 <select
@@ -383,7 +383,7 @@ const Services = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Precio (GTQ) *
                 </label>
                 <input
@@ -398,7 +398,7 @@ const Services = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Duración (minutos) *
                 </label>
                 <input
@@ -413,7 +413,7 @@ const Services = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                 Descripción
               </label>
               <textarea
@@ -432,7 +432,7 @@ const Services = () => {
                 onChange={(e) => setFormData({ ...formData, activo: e.target.checked })}
                 className="rounded"
               />
-              <label htmlFor="activo" className="ml-2 text-sm text-gray-700">
+              <label htmlFor="activo" className="ml-2 text-sm" style={{ color: 'var(--text)' }}>
                 Servicio activo
               </label>
             </div>

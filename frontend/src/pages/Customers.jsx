@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
 import Modal from '../components/Common/Modal';
 import apiService from '../services/api';
+import { formatCurrency } from '../utils/currency';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
@@ -55,7 +56,7 @@ const Customers = () => {
     e.preventDefault();
     try {
       setError('');
-      
+
       if (editingCustomer) {
         await apiService.updateCustomer(editingCustomer.id, formData);
         setSuccess('Cliente actualizado correctamente');
@@ -63,7 +64,7 @@ const Customers = () => {
         await apiService.createCustomer(formData);
         setSuccess('Cliente creado correctamente');
       }
-      
+
       setShowModal(false);
       setEditingCustomer(null);
       resetForm();
@@ -88,7 +89,7 @@ const Customers = () => {
 
   const handleDelete = async (customerId) => {
     if (!window.confirm('¿Estás seguro de eliminar este cliente?')) return;
-    
+
     try {
       await apiService.deleteCustomer(customerId);
       setSuccess('Cliente eliminado correctamente');
@@ -120,21 +121,14 @@ const Customers = () => {
     return new Date(dateString).toLocaleDateString('es-GT');
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-GT', {
-      style: 'currency',
-      currency: 'GTQ'
-    }).format(amount || 0);
-  };
-
   return (
     <Layout title="Gestión de Clientes">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
-            <p className="text-gray-600">Gestiona la información de tus clientes</p>
+            <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Clientes</h1>
+            <p style={{ color: 'var(--text-muted)' }}>Gestiona la información de tus clientes</p>
           </div>
           <button
             onClick={openModal}
@@ -155,7 +149,7 @@ const Customers = () => {
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="flex-1 max-w-md">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                   <input
                     type="text"
                     placeholder="Buscar clientes..."
@@ -165,7 +159,7 @@ const Customers = () => {
                   />
                 </div>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                 Total: {totalCustomers} clientes
               </div>
             </div>
@@ -180,42 +174,42 @@ const Customers = () => {
                 <LoadingSpinner />
               </div>
             ) : customers.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                <User className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+              <div className="p-8 text-center" style={{ color: 'var(--text-muted)' }}>
+                <User className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
                 <p>No se encontraron clientes</p>
                 <p className="text-sm">Crea tu primer cliente para comenzar</p>
               </div>
             ) : (
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead style={{ backgroundColor: 'var(--primary-light)' }}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Cliente
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Contacto
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Fecha Registro
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Total Gastado
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
                       Acciones
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y" style={{ borderColor: 'var(--border)' }}>
                   {customers.map((customer) => (
-                    <tr key={customer.id} className="hover:bg-gray-50">
+                    <tr key={customer.id} className="hover:bg-opacity-50" style={{ backgroundColor: 'var(--surface)' }}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium" style={{ color: 'var(--text)' }}>
                             {customer.nombre}
                           </div>
                           {customer.fecha_nacimiento && (
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                               Cumpleaños: {formatDate(customer.fecha_nacimiento)}
                             </div>
                           )}
@@ -224,36 +218,40 @@ const Customers = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="space-y-1">
                           {customer.telefono && (
-                            <div className="flex items-center text-sm text-gray-600">
+                            <div className="flex items-center text-sm" style={{ color: 'var(--text-muted)' }}>
                               <Phone className="w-3 h-3 mr-1" />
                               {customer.telefono}
                             </div>
                           )}
                           {customer.email && (
-                            <div className="flex items-center text-sm text-gray-600">
+                            <div className="flex items-center text-sm" style={{ color: 'var(--text-muted)' }}>
                               <Mail className="w-3 h-3 mr-1" />
                               {customer.email}
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: 'var(--text-muted)' }}>
                         {formatDate(customer.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: 'var(--success)' }}>
                         {formatCurrency(customer.total_gastado)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
                             onClick={() => handleEdit(customer)}
-                            className="text-blue-600 hover:text-blue-900"
+                            style={{ color: 'var(--primary)' }}
+                            onMouseEnter={(e) => e.target.style.color = 'var(--primary-dark)'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--primary)'}
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(customer.id)}
-                            className="text-red-600 hover:text-red-900"
+                            style={{ color: 'var(--error)' }}
+                            onMouseEnter={(e) => e.target.style.color = '#dc2626'}
+                            onMouseLeave={(e) => e.target.style.color = 'var(--error)'}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -268,9 +266,9 @@ const Customers = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-3 border-t border-gray-200">
+            <div className="px-6 py-3 border-t" style={{ borderColor: 'var(--border)' }}>
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Página {currentPage} de {totalPages}
                 </div>
                 <div className="flex space-x-2">
@@ -303,7 +301,7 @@ const Customers = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Nombre Completo *
                 </label>
                 <input
@@ -316,7 +314,7 @@ const Customers = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Teléfono
                 </label>
                 <input
@@ -328,7 +326,7 @@ const Customers = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Email
                 </label>
                 <input
@@ -340,7 +338,7 @@ const Customers = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                   Fecha de Nacimiento
                 </label>
                 <input
@@ -352,7 +350,7 @@ const Customers = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                 Dirección
               </label>
               <input
@@ -364,7 +362,7 @@ const Customers = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
                 Notas
               </label>
               <textarea
