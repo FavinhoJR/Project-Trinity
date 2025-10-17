@@ -77,20 +77,26 @@ const Sidebar = ({ isOpen, onToggle }) => {
       {/* Sidebar */}
       <div className={`sidebar ${isOpen ? 'open' : ''} z-50`}>
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Scissors className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--primary)' }}>
+                <Scissors className="w-5 h-5" style={{ color: 'white' }} />
               </div>
               <div>
-                <h1 className="font-semibold text-lg">TRINITY</h1>
-                <p className="text-sm text-gray-500">Salón de Belleza</p>
+                <h1 className="font-semibold text-lg" style={{ color: 'var(--text)' }}>TRINITY</h1>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Salón de Belleza</p>
               </div>
             </div>
             <button
               onClick={onToggle}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
+              className="md:hidden p-2 rounded-lg"
+              style={{ 
+                backgroundColor: 'transparent',
+                color: 'var(--text)'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--surface)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -98,18 +104,18 @@ const Sidebar = ({ isOpen, onToggle }) => {
         </div>
 
         {/* User info */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--surface)' }}>
+              <span className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
                 {user?.email?.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium truncate" style={{ color: 'var(--text)' }}>
                 {user?.email}
               </p>
-              <p className="text-xs text-gray-500 capitalize">
+              <p className="text-xs capitalize" style={{ color: 'var(--text-muted)' }}>
                 {user?.role}
               </p>
             </div>
@@ -144,10 +150,16 @@ const Sidebar = ({ isOpen, onToggle }) => {
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t" style={{ borderColor: 'var(--border)' }}>
           <button
             onClick={handleLogout}
-            className="nav-item w-full text-red-600 hover:bg-red-50"
+            className="nav-item w-full"
+            style={{ 
+              color: 'var(--error)',
+              backgroundColor: 'transparent'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--error)'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
           >
             <LogOut className="w-5 h-5" />
             <span>Cerrar Sesión</span>

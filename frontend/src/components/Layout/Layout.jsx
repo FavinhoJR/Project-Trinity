@@ -10,7 +10,7 @@ const Layout = ({ children, title }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
       
       <div className="main-content">

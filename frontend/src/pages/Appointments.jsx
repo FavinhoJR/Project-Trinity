@@ -163,8 +163,8 @@ const Appointments = () => {
       {/* Header con filtros */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Citas</h1>
-          <p className="text-gray-600">Gestiona las citas del salón</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Citas</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Gestiona las citas del salón</p>
         </div>
         
         {hasRole(['admin', 'recepcion']) && (
@@ -260,17 +260,17 @@ const Appointments = () => {
                     <td>
                       <div>
                         <div className="font-medium">{appointment.cliente_nombre}</div>
-                        <div className="text-sm text-gray-500">{appointment.cliente_telefono}</div>
+                        <div className="text-sm" style={{ color: 'var(--text-muted)' }}>{appointment.cliente_telefono}</div>
                       </div>
                     </td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <Calendar className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                         <div>
                           <div className="text-sm">
                             {new Date(appointment.fecha_inicio).toLocaleDateString('es-ES')}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                             {new Date(appointment.fecha_inicio).toLocaleTimeString('es-ES', {
                               hour: '2-digit',
                               minute: '2-digit'
@@ -281,7 +281,7 @@ const Appointments = () => {
                     </td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-gray-400" />
+                        <User className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
                         <span className="text-sm">{appointment.estilista_email}</span>
                       </div>
                     </td>
@@ -321,7 +321,7 @@ const Appointments = () => {
               ) : (
                 <tr>
                   <td colSpan={hasRole(['admin', 'recepcion']) ? 7 : 6} className="text-center py-8">
-                    <div className="text-gray-500">
+                    <div style={{ color: 'var(--text-muted)' }}>
                       <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p>No hay citas que mostrar</p>
                     </div>
