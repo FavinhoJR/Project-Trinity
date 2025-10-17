@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Scissors, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
@@ -8,8 +8,8 @@ import Alert from '../components/Common/Alert';
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
-    email: 'admin@trinity.local',
-    password: 'admin'
+    email: '',
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,10 +27,10 @@ const Login = () => {
     try {
       const result = await login(formData.email, formData.password);
       if (!result.success) {
-        setError(result.error || 'Error al iniciar sesión');
+        setError(result.error || 'Credenciales inválidas. Por favor, intente nuevamente.');
       }
     } catch (err) {
-      setError('Error de conexión. Verifique que el servidor esté funcionando.');
+      setError('Error de conexión. Por favor, verifique su conexión a internet.');
     } finally {
       setLoading(false);
     }
@@ -44,115 +44,113 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="login-container">
+      {/* Background decorativo */}
+      <div className="login-background">
+        <div className="login-circle login-circle-1"></div>
+        <div className="login-circle login-circle-2"></div>
+        <div className="login-circle login-circle-3"></div>
+      </div>
+
+      <div className="login-content">
         {/* Logo y título */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
-            <Scissors className="w-8 h-8 text-white" />
+        <div className="login-header">
+          <div className="login-logo">
+            <Sparkles className="login-logo-icon" strokeWidth={1.5} />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">TRINITY</h1>
-          <p className="text-gray-600">Sistema de Gestión de Salón</p>
+          <h1 className="login-title">TRINITY</h1>
+          <p className="login-subtitle">ESTÉTICA & SPA</p>
+          <div className="login-divider"></div>
         </div>
 
         {/* Formulario */}
-        <div className="card">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-center mb-6">
-              Iniciar Sesión
-            </h2>
+        <div className="login-card">
+          <h2 className="login-welcome">Bienvenido</h2>
+          <p className="login-description">Ingrese sus credenciales para continuar</p>
 
-            {error && (
-              <Alert 
-                type="error" 
-                message={error} 
-                onClose={() => setError('')}
-                className="mb-4"
-              />
-            )}
+          {error && (
+            <Alert 
+              type="error" 
+              message={error} 
+              onClose={() => setError('')}
+              className="mb-4"
+            />
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="form-group">
-                <label className="label">Email</label>
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label className="login-label">Correo Electrónico</label>
+              <div className="login-input-wrapper">
+                <Mail className="login-input-icon" size={18} />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="input"
-                  placeholder="tu@email.com"
+                  className="login-input"
+                  placeholder="correo@ejemplo.com"
                   required
                   disabled={loading}
+                  autoComplete="email"
                 />
               </div>
+            </div>
 
-              <div className="form-group">
-                <label className="label">Contraseña</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="input pr-10"
-                    placeholder="••••••••"
-                    required
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    disabled={loading}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full btn-lg"
-              >
-                {loading ? (
-                  <>
-                    <LoadingSpinner size="sm" />
-                    Iniciando sesión...
-                  </>
-                ) : (
-                  'Iniciar Sesión'
-                )}
-              </button>
-            </form>
-
-            {/* Usuarios de prueba */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
-                Usuarios de prueba:
-              </h3>
-              <div className="text-xs text-gray-600 space-y-1">
-                <div>
-                  <strong>Admin:</strong> admin@trinity.local / admin
-                </div>
-                <div>
-                  <strong>Recepción:</strong> recepcion@trinity.local / admin
-                </div>
-                <div>
-                  <strong>Estilista:</strong> stylist@trinity.local / admin
-                </div>
+            <div className="form-group">
+              <label className="login-label">Contraseña</label>
+              <div className="login-input-wrapper">
+                <Lock className="login-input-icon" size={18} />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="login-input"
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="login-password-toggle"
+                  disabled={loading}
+                  tabIndex="-1"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
               </div>
             </div>
-          </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="login-button"
+            >
+              {loading ? (
+                <>
+                  <LoadingSpinner size="sm" />
+                  <span>Iniciando sesión...</span>
+                </>
+              ) : (
+                <>
+                  <span>Iniciar Sesión</span>
+                  <Sparkles size={18} />
+                </>
+              )}
+            </button>
+          </form>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 text-sm text-gray-500">
-          © 2024 Trinity Salon Management System
+        <div className="login-footer">
+          <p>© 2025 Trinity Estética & SPA</p>
+          <p>Todos los derechos reservados</p>
         </div>
       </div>
     </div>
