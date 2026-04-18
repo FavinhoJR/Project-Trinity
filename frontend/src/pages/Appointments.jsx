@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Calendar, Clock, User } from 'lucide-react';
+import { Plus, Calendar, User, CheckCircle2 } from 'lucide-react';
 import Layout from '../components/Layout/Layout';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
@@ -20,6 +20,7 @@ const Appointments = () => {
   const [success, setSuccess] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [filters, setFilters] = useState({
     estado: '',
     estilista_id: user.role === 'estilista' ? user.id : '',
@@ -71,6 +72,9 @@ const Appointments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setSubmitting(true);
+      setError('');
+
       if (editingAppointment) {
         await apiService.updateAppointment(editingAppointment.id, formData);
         setSuccess('Cita actualizada correctamente');
@@ -85,20 +89,28 @@ const Appointments = () => {
       loadData();
     } catch (err) {
       setError(err.message || 'Error al guardar la cita');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleEdit = (appointment) => {
-    setEditingAppointment(appointment);
-    setFormData({
-      cliente_id: appointment.cliente_id,
-      estilista_id: appointment.estilista_id,
-      servicio_ids: appointment.servicios?.map(s => s.id) || [],
-      fecha_inicio: new Date(appointment.fecha_inicio).toISOString().slice(0, 16),
-      estado: appointment.estado,
-      notas: appointment.notas || ''
-    });
-    setShowModal(true);
+  const handleEdit = async (appointment) => {
+    try {
+      setError('');
+      const detail = await apiService.getAppointment(appointment.id);
+      setEditingAppointment(detail);
+      setFormData({
+        cliente_id: detail.cliente_id,
+        estilista_id: detail.estilista_id,
+        servicio_ids: detail.servicios?.map((service) => service.id) || [],
+        fecha_inicio: new Date(detail.fecha_inicio).toISOString().slice(0, 16),
+        estado: detail.estado,
+        notas: detail.notas || ''
+      });
+      setShowModal(true);
+    } catch (err) {
+      setError(err.message || 'No se pudo cargar el detalle de la cita');
+    }
   };
 
   const handleDelete = async (id) => {
@@ -128,6 +140,19 @@ const Appointments = () => {
     resetForm();
     setEditingAppointment(null);
     setShowModal(true);
+  };
+
+  const handleStylistStatus = async (appointment, status) => {
+    try {
+      await apiService.updateAppointment(appointment.id, {
+        estado: status,
+        notas: appointment.notas || ''
+      });
+      setSuccess(`Cita marcada como ${status}`);
+      loadData();
+    } catch (err) {
+      setError(err.message || 'No se pudo actualizar el estado de la cita');
+    }
   };
 
   if (loading) {
@@ -250,7 +275,7 @@ const Appointments = () => {
                 <th>Servicios</th>
                 <th>Estado</th>
                 <th>Total</th>
-                {hasRole(['admin', 'recepcion']) && <th>Acciones</th>}
+                {(hasRole(['admin', 'recepcion']) || user.role === 'estilista') && <th>Acciones</th>}
               </tr>
             </thead>
             <tbody>
@@ -282,7 +307,7 @@ const Appointments = () => {
                     <td>
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-                        <span className="text-sm">{appointment.estilista_email}</span>
+                        <span className="text-sm">{appointment.estilista_nombre || appointment.estilista_email}</span>
                       </div>
                     </td>
                     <td>
@@ -316,11 +341,34 @@ const Appointments = () => {
                         </div>
                       </td>
                     )}
+                    {user.role === 'estilista' && (
+                      <td>
+                        <div className="flex gap-2">
+                          {appointment.estado !== 'confirmada' && appointment.estado !== 'completada' && appointment.estado !== 'cancelada' && (
+                            <button
+                              onClick={() => handleStylistStatus(appointment, 'confirmada')}
+                              className="btn btn-sm btn-secondary"
+                            >
+                              Confirmar
+                            </button>
+                          )}
+                          {appointment.estado !== 'completada' && appointment.estado !== 'cancelada' && (
+                            <button
+                              onClick={() => handleStylistStatus(appointment, 'completada')}
+                              className="btn btn-sm btn-primary"
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                              Completar
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={hasRole(['admin', 'recepcion']) ? 7 : 6} className="text-center py-8">
+                  <td colSpan={hasRole(['admin', 'recepcion']) || user.role === 'estilista' ? 7 : 6} className="text-center py-8">
                     <div style={{ color: 'var(--text-muted)' }}>
                       <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       <p>No hay citas que mostrar</p>
@@ -454,8 +502,9 @@ const Appointments = () => {
               <button
                 type="submit"
                 className="btn btn-primary"
+                disabled={submitting || !formData.servicio_ids.length}
               >
-                {editingAppointment ? 'Actualizar' : 'Crear'} Cita
+                {submitting ? 'Guardando...' : `${editingAppointment ? 'Actualizar' : 'Crear'} Cita`}
               </button>
             </div>
           </form>

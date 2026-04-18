@@ -1,19 +1,7 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import appointmentsRouter from '../src/routes/appointments.js';
-
-// Mock middleware
-jest.mock('../src/middleware/auth.js', () => ({
-  authGuard: (req, res, next) => {
-    req.user = { id: 1, email: 'admin@trinity.local', role: 'admin' };
-    next();
-  }
-}));
-
-jest.mock('../src/middleware/rbac.js', () => ({
-  rbac: () => (req, res, next) => next()
-}));
 
 const app = express();
 app.use(express.json());
@@ -22,7 +10,10 @@ const mockPool = {
   query: jest.fn()
 };
 app.set('db', mockPool);
-app.use('/appointments', appointmentsRouter);
+app.use('/appointments', (req, res, next) => {
+  req.user = { sub: 1, email: 'admin@trinity.local', role: 'admin' };
+  next();
+}, appointmentsRouter);
 
 describe('📅 Appointments Routes', () => {
   beforeEach(() => {
@@ -82,7 +73,7 @@ describe('📅 Appointments Routes', () => {
       const mockCitaCreada = [{ id: 1 }];
 
       mockPool.query
-        .mockResolvedValueOnce({ rows: mockServiciosDuracion })
+        .mockResolvedValueOnce({ rows: [{ total: '1', duracion_total: 60 }] })
         .mockResolvedValueOnce({ rows: mockCitaCreada })
         .mockResolvedValueOnce({ rows: [] }); // Servicios asociados
 
@@ -135,7 +126,7 @@ describe('📅 Appointments Routes', () => {
       const conflictError = new Error('Conflicto de horario: estilista 2 ya tiene cita en ese rango');
       
       mockPool.query
-        .mockResolvedValueOnce({ rows: [{ duracion_total: 60 }] })
+        .mockResolvedValueOnce({ rows: [{ total: '1', duracion_total: 60 }] })
         .mockRejectedValueOnce(conflictError);
 
       const response = await request(app)

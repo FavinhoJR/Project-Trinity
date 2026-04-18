@@ -19,8 +19,15 @@ CREATE TABLE IF NOT EXISTS clientes (
   nombre TEXT NOT NULL,
   telefono TEXT,
   email TEXT UNIQUE,
+  fecha_nacimiento DATE,
+  direccion TEXT,
+  notas TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE clientes ADD COLUMN IF NOT EXISTS fecha_nacimiento DATE;
+ALTER TABLE clientes ADD COLUMN IF NOT EXISTS direccion TEXT;
+ALTER TABLE clientes ADD COLUMN IF NOT EXISTS notas TEXT;
 
 -- 3) SERVICIOS
 CREATE TABLE IF NOT EXISTS servicios (
@@ -51,6 +58,68 @@ CREATE TABLE IF NOT EXISTS servicio_citas (
   id SERIAL PRIMARY KEY,
   cita_id INT NOT NULL REFERENCES citas(id) ON DELETE CASCADE,
   servicio_id INT NOT NULL REFERENCES servicios(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS inventario_items (
+  id SERIAL PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  sku TEXT UNIQUE,
+  categoria TEXT,
+  stock_actual INT NOT NULL DEFAULT 0,
+  stock_minimo INT NOT NULL DEFAULT 0,
+  unidad TEXT DEFAULT 'unidad',
+  costo_unitario NUMERIC(10,2) NOT NULL DEFAULT 0,
+  precio_venta NUMERIC(10,2),
+  activo BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS movimientos_inventario (
+  id SERIAL PRIMARY KEY,
+  item_id INT NOT NULL REFERENCES inventario_items(id) ON DELETE CASCADE,
+  tipo TEXT NOT NULL CHECK (tipo IN ('entrada', 'salida', 'ajuste')),
+  cantidad INT NOT NULL,
+  motivo TEXT,
+  referencia TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ventas (
+  id SERIAL PRIMARY KEY,
+  cliente_id INT REFERENCES clientes(id) ON DELETE SET NULL,
+  usuario_id INT REFERENCES users(id) ON DELETE SET NULL,
+  tipo TEXT NOT NULL DEFAULT 'mostrador' CHECK (tipo IN ('mostrador', 'servicios', 'mixta')),
+  estado TEXT NOT NULL DEFAULT 'cerrada' CHECK (estado IN ('borrador', 'cerrada', 'anulada')),
+  subtotal NUMERIC(10,2) NOT NULL DEFAULT 0,
+  descuento NUMERIC(10,2) NOT NULL DEFAULT 0,
+  total NUMERIC(10,2) NOT NULL DEFAULT 0,
+  metodo_pago TEXT DEFAULT 'efectivo',
+  notas TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS venta_detalles (
+  id SERIAL PRIMARY KEY,
+  venta_id INT NOT NULL REFERENCES ventas(id) ON DELETE CASCADE,
+  tipo_item TEXT NOT NULL CHECK (tipo_item IN ('servicio', 'producto')),
+  servicio_id INT REFERENCES servicios(id) ON DELETE SET NULL,
+  inventario_item_id INT REFERENCES inventario_items(id) ON DELETE SET NULL,
+  descripcion TEXT NOT NULL,
+  cantidad INT NOT NULL DEFAULT 1,
+  precio_unitario NUMERIC(10,2) NOT NULL DEFAULT 0,
+  total_linea NUMERIC(10,2) NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS notificaciones (
+  id SERIAL PRIMARY KEY,
+  tipo TEXT NOT NULL,
+  canal TEXT NOT NULL CHECK (canal IN ('sistema', 'email', 'sms')),
+  destinatario TEXT,
+  payload JSONB DEFAULT '{}'::jsonb,
+  estado TEXT NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'enviada', 'fallida')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  processed_at TIMESTAMPTZ
 );
 
 -- 6) Trigger anti-solapamiento por estilista

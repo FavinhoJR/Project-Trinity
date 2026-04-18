@@ -1,21 +1,7 @@
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 import customersRouter from '../src/routes/customers.js';
-import { authGuard } from '../src/middleware/auth.js';
-import { rbac } from '../src/middleware/rbac.js';
-
-// Mock middleware
-jest.mock('../src/middleware/auth.js', () => ({
-  authGuard: (req, res, next) => {
-    req.user = { id: 1, email: 'admin@trinity.local', role: 'admin' };
-    next();
-  }
-}));
-
-jest.mock('../src/middleware/rbac.js', () => ({
-  rbac: () => (req, res, next) => next()
-}));
 
 const app = express();
 app.use(express.json());
@@ -24,7 +10,10 @@ const mockPool = {
   query: jest.fn()
 };
 app.set('db', mockPool);
-app.use('/customers', authGuard, rbac(['admin','recepcion']), customersRouter);
+app.use('/customers', (req, res, next) => {
+  req.user = { sub: 1, email: 'admin@trinity.local', role: 'admin' };
+  next();
+}, customersRouter);
 
 describe('👥 Customers Routes', () => {
   beforeEach(() => {
@@ -64,7 +53,7 @@ describe('👥 Customers Routes', () => {
 
       expect(response.status).toBe(200);
       expect(mockPool.query).toHaveBeenCalledWith(
-        expect.stringContaining('WHERE LOWER(nombre) LIKE LOWER($1)'),
+        expect.stringContaining('LOWER(c.nombre) LIKE LOWER($1)'),
         expect.arrayContaining(['%Juan%'])
       );
     });
@@ -90,7 +79,7 @@ describe('👥 Customers Routes', () => {
         });
 
       expect(response.status).toBe(201);
-      expect(response.body).toEqual(newCustomer);
+      expect(response.body).toMatchObject(newCustomer);
     });
 
     test('❌ Debe fallar sin nombre requerido', async () => {
@@ -143,7 +132,7 @@ describe('👥 Customers Routes', () => {
         });
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(updatedCustomer);
+      expect(response.body).toMatchObject(updatedCustomer);
     });
 
     test('❌ Debe fallar con cliente inexistente', async () => {

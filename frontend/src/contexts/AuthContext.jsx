@@ -1,105 +1,75 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import apiService from '../services/api';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-export const useAuth = () => {
+function decodeToken(token) {
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return {
+      id: payload.sub,
+      email: payload.email,
+      role: payload.role,
+      nombre: payload.nombre || null
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
 
-export const AuthProvider = ({ children }) => {
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [user, setUser] = useState(() => decodeToken(localStorage.getItem('token')));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      // Decodificar el token para obtener información del usuario
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser({
-          id: payload.sub,
-          email: payload.email,
-          role: payload.role
-        });
-      } catch (error) {
-        console.error('Error decoding token:', error);
-        logout();
-      }
+    const decodedUser = decodeToken(token);
+
+    if (token && !decodedUser) {
+      localStorage.removeItem('token');
+      setToken(null);
+      setUser(null);
+      setLoading(false);
+      return;
     }
+
+    setUser(decodedUser);
     setLoading(false);
   }, [token]);
 
   const login = async (email, password) => {
     try {
-      console.log('🔧 API_URL usado para login:', API_URL);
-      console.log('Intentando login con:', { email, password });
-      
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await apiService.login(email, password);
 
-      const data = await response.json();
-      console.log('Respuesta del servidor:', data);
-
-      if (response.ok && data.token) {
-        setToken(data.token);
-        localStorage.setItem('token', data.token);
-        
-        // Decodificar el token
-        try {
-          const payload = JSON.parse(atob(data.token.split('.')[1]));
-          console.log('Token decodificado:', payload);
-          
-          setUser({
-            id: payload.sub,
-            email: payload.email,
-            role: payload.role
-          });
-          
-          return { success: true };
-        } catch (decodeError) {
-          console.error('Error decodificando token:', decodeError);
-          return { success: false, error: 'Error en el token recibido' };
-        }
-      } else {
-        console.error('Error en login:', data);
-        return { success: false, error: data.error || 'Credenciales incorrectas' };
+      if (!data?.token) {
+        return { success: false, error: 'Credenciales incorrectas' };
       }
+
+      localStorage.setItem('token', data.token);
+      setToken(data.token);
+      setUser(data.user || decodeToken(data.token));
+      return { success: true };
     } catch (error) {
-      console.error('Error de conexión:', error);
-      return { success: false, error: `Error de conexión con ${API_URL}` };
+      return { success: false, error: error.message || 'No se pudo iniciar sesión' };
     }
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    localStorage.removeItem('token');
-  };
-
-  const isAuthenticated = () => {
-    return !!token && !!user;
-  };
-
-  const hasRole = (roles) => {
-    if (!user) return false;
-    if (Array.isArray(roles)) {
-      return roles.includes(user.role);
-    }
-    return user.role === roles;
-  };
-
-  const getAuthHeaders = () => {
-    return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
   const value = {
@@ -108,14 +78,16 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
-    isAuthenticated,
-    hasRole,
-    getAuthHeaders
+    isAuthenticated: () => Boolean(token && user),
+    hasRole: (roles) => {
+      if (!user) {
+        return false;
+      }
+
+      return Array.isArray(roles) ? roles.includes(user.role) : user.role === roles;
+    },
+    getAuthHeaders: () => (token ? { Authorization: `Bearer ${token}` } : {})
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

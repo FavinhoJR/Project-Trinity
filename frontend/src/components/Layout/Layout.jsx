@@ -5,20 +5,13 @@ import Header from './Header';
 const Layout = ({ children, title }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
-      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-      
+    <div className="app-shell">
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen((current) => !current)} />
+
       <div className="main-content">
-        <Header onMenuToggle={toggleSidebar} title={title} />
-        
-        <main className="p-6">
-          {children}
-        </main>
+        <Header title={title} onMenuToggle={() => setSidebarOpen((current) => !current)} />
+        <main className="page-shell">{children}</main>
       </div>
     </div>
   );

@@ -59,8 +59,6 @@ const Alert = ({ type = 'info', message, onClose, className = '' }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
             color: config.color
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
-          onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
         >
           <X className="w-4 h-4" />
         </button>

@@ -1,51 +1,45 @@
 import React from 'react';
-import { Menu, Bell, Search } from 'lucide-react';
+import { Menu, Bell, CalendarDays } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Header = ({ onMenuToggle, title = 'Dashboard' }) => {
+  const { user } = useAuth();
+
+  const todayLabel = new Intl.DateTimeFormat('es-MX', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  }).format(new Date());
+
   return (
-    <header className="header">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onMenuToggle}
-            className="md:hidden p-2 rounded-lg"
-            style={{ 
-              backgroundColor: 'transparent',
-              color: 'var(--text)'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--surface)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-          >
-            <Menu className="w-5 h-5" />
+    <header className="topbar">
+      <div className="topbar__main">
+        <div className="topbar__title-group">
+          <button type="button" onClick={onMenuToggle} className="icon-button topbar__menu">
+            <Menu size={18} />
           </button>
-          <h1 className="text-xl font-semibold" style={{ color: 'var(--text)' }}>{title}</h1>
+          <div>
+            <p className="eyebrow">Operación diaria</p>
+            <h1 className="page-title">{title}</h1>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="hidden md:flex items-center gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: 'var(--surface)' }}>
-            <Search className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="bg-transparent border-none outline-none text-sm w-64"
-              style={{ color: 'var(--text)' }}
-            />
+        <div className="topbar__actions">
+          <div className="topbar-chip">
+            <CalendarDays size={16} />
+            <span>{todayLabel}</span>
           </div>
-
-          {/* Notifications */}
-          <button 
-            className="relative p-2 rounded-lg"
-            style={{ 
-              backgroundColor: 'transparent',
-              color: 'var(--text-muted)'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--surface)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-          >
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--error)' }}></span>
-          </button>
+          <div className="topbar-chip">
+            <Bell size={16} />
+            <span>Base de notificaciones lista</span>
+          </div>
+          <div className="topbar-user">
+            <div className="topbar-user__avatar">{(user?.nombre || user?.email || 'U').charAt(0).toUpperCase()}</div>
+            <div>
+              <strong>{user?.nombre || user?.email}</strong>
+              <span>{user?.role}</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>

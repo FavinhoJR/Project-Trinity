@@ -1,10 +1,24 @@
-// Usa variable de entorno si está disponible, sino usa localhost para desarrollo
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
-// Debug: Ver qué URL se está usando
-console.log('🔧 TRINITY API URL:', API_BASE_URL);
-console.log('🔧 VITE_API_URL env:', import.meta.env.VITE_API_URL);
-console.log('🔧 Todas las env vars:', import.meta.env);
+function buildQueryString(params = {}) {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((item) => searchParams.append(key, item));
+      return;
+    }
+
+    searchParams.append(key, value);
+  });
+
+  const queryString = searchParams.toString();
+  return queryString ? `?${queryString}` : '';
+}
 
 class ApiService {
   constructor() {
@@ -17,207 +31,189 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
-    const config = {
+    const response = await fetch(`${this.baseURL}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
         ...this.getAuthHeaders(),
-        ...options.headers,
+        ...options.headers
       },
-      ...options,
-    };
+      ...options
+    });
 
-    try {
-      const response = await fetch(url, config);
-      const data = await response.json();
+    let data = null;
+    const responseText = await response.text();
 
-      if (!response.ok) {
-        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    if (responseText) {
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        data = { error: responseText };
       }
-
-      return data;
-    } catch (error) {
-      console.error('API request failed:', error);
-      throw error;
     }
+
+    if (!response.ok) {
+      const errorMessage = data?.error || `HTTP error ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    return data;
   }
 
-  // Auth
-  async login(email, password) {
+  login(email, password) {
     return this.request('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password })
     });
   }
 
-  // Customers
-  async getCustomers(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/customers${queryString ? `?${queryString}` : ''}`);
+  getCustomers(params = {}) {
+    return this.request(`/customers${buildQueryString(params)}`);
   }
 
-  async getCustomer(id) {
+  getCustomer(id) {
     return this.request(`/customers/${id}`);
   }
 
-  async createCustomer(customerData) {
+  createCustomer(customerData) {
     return this.request('/customers', {
       method: 'POST',
-      body: JSON.stringify(customerData),
+      body: JSON.stringify(customerData)
     });
   }
 
-  async updateCustomer(id, customerData) {
+  updateCustomer(id, customerData) {
     return this.request(`/customers/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(customerData),
+      body: JSON.stringify(customerData)
     });
   }
 
-  async deleteCustomer(id) {
-    return this.request(`/customers/${id}`, {
-      method: 'DELETE',
-    });
+  deleteCustomer(id) {
+    return this.request(`/customers/${id}`, { method: 'DELETE' });
   }
 
-  // Appointments
-  async getAppointments(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/appointments${queryString ? `?${queryString}` : ''}`);
+  getAppointments(params = {}) {
+    return this.request(`/appointments${buildQueryString(params)}`);
   }
 
-  async getAppointment(id) {
+  getAppointment(id) {
     return this.request(`/appointments/${id}`);
   }
 
-  async createAppointment(appointmentData) {
+  createAppointment(appointmentData) {
     return this.request('/appointments', {
       method: 'POST',
-      body: JSON.stringify(appointmentData),
+      body: JSON.stringify(appointmentData)
     });
   }
 
-  async updateAppointment(id, appointmentData) {
+  updateAppointment(id, appointmentData) {
     return this.request(`/appointments/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(appointmentData),
+      body: JSON.stringify(appointmentData)
     });
   }
 
-  async deleteAppointment(id, force = false) {
+  deleteAppointment(id, force = false) {
     return this.request(`/appointments/${id}${force ? '?force=true' : ''}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
   }
 
-  async getCalendarAppointments(year, month, estilistaId = null) {
-    const params = estilistaId ? `?estilista_id=${estilistaId}` : '';
-    return this.request(`/appointments/calendar/${year}/${month}${params}`);
+  getCalendarAppointments(year, month, estilistaId = null) {
+    return this.request(
+      `/appointments/calendar/${year}/${month}${buildQueryString(estilistaId ? { estilista_id: estilistaId } : {})}`
+    );
   }
 
-  // Services
-  async getServices(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/services${queryString ? `?${queryString}` : ''}`);
+  getServices(params = {}) {
+    return this.request(`/services${buildQueryString(params)}`);
   }
 
-  async getService(id) {
+  getService(id) {
     return this.request(`/services/${id}`);
   }
 
-  async createService(serviceData) {
+  createService(serviceData) {
     return this.request('/services', {
       method: 'POST',
-      body: JSON.stringify(serviceData),
+      body: JSON.stringify(serviceData)
     });
   }
 
-  async updateService(id, serviceData) {
+  updateService(id, serviceData) {
     return this.request(`/services/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(serviceData),
+      body: JSON.stringify(serviceData)
     });
   }
 
-  async deleteService(id) {
-    return this.request(`/services/${id}`, {
-      method: 'DELETE',
-    });
+  deleteService(id) {
+    return this.request(`/services/${id}`, { method: 'DELETE' });
   }
 
-  async getServiceCategories() {
+  getServiceCategories() {
     return this.request('/services/categories/list');
   }
 
-  // Users
-  async getUsers(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/users${queryString ? `?${queryString}` : ''}`);
+  getUsers(params = {}) {
+    return this.request(`/users${buildQueryString(params)}`);
   }
 
-  async getUser(id) {
+  getUser(id) {
     return this.request(`/users/${id}`);
   }
 
-  async getStylists() {
+  getStylists() {
     return this.request('/users/stylists');
   }
 
-  async createUser(userData) {
+  createUser(userData) {
     return this.request('/users', {
       method: 'POST',
-      body: JSON.stringify(userData),
+      body: JSON.stringify(userData)
     });
   }
 
-  async updateUser(id, userData) {
+  updateUser(id, userData) {
     return this.request(`/users/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(userData),
+      body: JSON.stringify(userData)
     });
   }
 
-  async deleteUser(id) {
-    return this.request(`/users/${id}`, {
-      method: 'DELETE',
-    });
+  deleteUser(id) {
+    return this.request(`/users/${id}`, { method: 'DELETE' });
   }
 
-  async toggleUserStatus(id) {
-    return this.request(`/users/${id}/toggle-status`, {
-      method: 'PUT',
-    });
+  toggleUserStatus(id) {
+    return this.request(`/users/${id}/toggle-status`, { method: 'PUT' });
   }
 
-  async updateUserPassword(id, newPassword) {
+  updateUserPassword(id, newPassword) {
     return this.request(`/users/${id}/password`, {
       method: 'PUT',
-      body: JSON.stringify({ password: newPassword }),
+      body: JSON.stringify({ password: newPassword })
     });
   }
 
-  // Reports
-  async getDashboardStats(periodo = 30) {
-    return this.request(`/reports/dashboard?periodo=${periodo}`);
+  getDashboardStats(periodo = 30) {
+    return this.request(`/reports/dashboard${buildQueryString({ periodo })}`);
   }
 
-  async getRevenueReport(params) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/reports/revenue?${queryString}`);
+  getRevenueReport(params = {}) {
+    return this.request(`/reports/revenue${buildQueryString(params)}`);
   }
 
-  async getAppointmentsReport(params) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/reports/appointments?${queryString}`);
+  getAppointmentsReport(params = {}) {
+    return this.request(`/reports/appointments${buildQueryString(params)}`);
   }
 
-  async getClientsReport(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/reports/clients${queryString ? `?${queryString}` : ''}`);
+  getClientsReport(params = {}) {
+    return this.request(`/reports/clients${buildQueryString(params)}`);
   }
 
-  // Health check
-  async healthCheck() {
+  healthCheck() {
     return this.request('/health');
   }
 }

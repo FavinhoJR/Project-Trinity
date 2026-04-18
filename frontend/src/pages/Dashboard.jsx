@@ -1,85 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Calendar, Scissors, DollarSign, TrendingUp, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  Users,
+  CalendarRange,
+  Scissors,
+  DollarSign,
+  Clock3,
+  CheckCircle2,
+  Ban,
+  Star
+} from 'lucide-react';
 import Layout from '../components/Layout/Layout';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
+import StatusBadge from '../components/Common/StatusBadge';
 import apiService from '../services/api';
 import { formatCurrency } from '../utils/currency';
 import { useAuth } from '../contexts/AuthContext';
 
-const StatCard = ({ title, value, icon: Icon, color, change }) => {
-  return (
-    <div className="card">
-      <div className="p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>{title}</p>
-            <p className="text-2xl font-bold" style={{ color: 'var(--text)' }}>{value}</p>
-            {change && (
-              <p className="text-sm mt-1" style={{ color: 'var(--success)' }}>
-                <TrendingUp className="w-4 h-4 inline mr-1" />
-                {change}
-              </p>
-            )}
-          </div>
-          <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--primary)' }}>
-            <Icon className="w-6 h-6" style={{ color: 'white' }} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+const metricCards = [
+  { key: 'clientes', label: 'Clientes activos', icon: Users },
+  { key: 'citas', label: 'Citas del período', icon: CalendarRange },
+  { key: 'servicios', label: 'Servicios activos', icon: Scissors },
+  { key: 'ingresos', label: 'Ingresos cerrados', icon: DollarSign }
+];
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [stats, setStats] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
   const [recentAppointments, setRecentAppointments] = useState([]);
-  const [topServices, setTopServices] = useState([]);
-  const [topStylists, setTopStylists] = useState([]);
 
   useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true);
+        const [statsData, appointmentsData] = await Promise.all([
+          apiService.getDashboardStats(30),
+          apiService.getAppointments({ limit: 6 })
+        ]);
+
+        setDashboardData(statsData);
+        setRecentAppointments(appointmentsData.appointments || []);
+      } catch (loadError) {
+        setError(loadError.message || 'Error al cargar el dashboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      
-      const [statsData, appointmentsData] = await Promise.all([
-        apiService.getDashboardStats(30),
-        apiService.getAppointments({ limit: 5 })
-      ]);
+  const general = dashboardData?.estadisticas_generales || {};
+  const ingresos = dashboardData?.ingresos || {};
+  const topServicios = dashboardData?.top_servicios || [];
+  const topEstilistas = dashboardData?.top_estilistas || [];
 
-      setStats(statsData);
-      setRecentAppointments(appointmentsData.appointments || []);
-      
-      // Simular datos de servicios y estilistas más populares
-      setTopServices([
-        { nombre: 'Corte básico', precio: 150, total_citas: 12 },
-        { nombre: 'Mechas', precio: 300, total_citas: 8 },
-        { nombre: 'Peinado', precio: 200, total_citas: 6 }
-      ]);
-      
-      setTopStylists([
-        { nombre: 'María González', email: 'maria@salon.com', ingresos_generados: 2500 },
-        { nombre: 'Ana López', email: 'ana@salon.com', ingresos_generados: 1800 }
-      ]);
-      
-    } catch (err) {
-      setError('Error al cargar datos del dashboard');
-      console.error('Error loading dashboard:', err);
-    } finally {
-      setLoading(false);
-    }
+  const metricValues = {
+    clientes: general.total_clientes || 0,
+    citas: general.citas_periodo || 0,
+    servicios: general.total_servicios || 0,
+    ingresos: formatCurrency(ingresos.ingresos_totales || 0)
   };
+
+  const completionRate = Number(general.citas_periodo)
+    ? Math.round((Number(general.citas_completadas_periodo || 0) / Number(general.citas_periodo || 1)) * 100)
+    : 0;
 
   if (loading) {
     return (
       <Layout title="Dashboard">
-        <div className="flex items-center justify-center h-64">
+        <div className="loading-panel">
           <LoadingSpinner size="lg" />
         </div>
       </Layout>
@@ -88,179 +80,188 @@ const Dashboard = () => {
 
   return (
     <Layout title="Dashboard">
-      {error && (
-        <Alert 
-          type="error" 
-          message={error} 
-          onClose={() => setError('')}
-          className="mb-6"
-        />
-      )}
-
-      {/* Saludo personalizado */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--text)' }}>
-          ¡Hola, {user?.email?.split('@')[0]}! 👋
-        </h1>
-        <p style={{ color: 'var(--text-muted)' }}>
-          Aquí tienes un resumen de la actividad de hoy.
-        </p>
-      </div>
-
-      {/* Estadísticas principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          title="Total Clientes"
-          value={stats?.estadisticas_generales?.total_clientes || 0}
-          icon={Users}
-        />
-        <StatCard
-          title="Citas del Período"
-          value={stats?.citas_periodo || 0}
-          icon={Calendar}
-        />
-        <StatCard
-          title="Servicios Activos"
-          value={stats?.total_servicios || 0}
-          icon={Scissors}
-        />
-        <StatCard
-          title="Ingresos (30 días)"
-          value={formatCurrency(stats?.ingresos_periodo || 0)}
-          icon={DollarSign}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Citas recientes */}
-        <div className="card">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>
-                Citas Recientes
-              </h3>
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4" style={{ color: 'var(--success)' }} />
-                  <span style={{ color: 'var(--text-muted)' }}>Confirmadas</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" style={{ color: 'var(--warning)' }} />
-                  <span style={{ color: 'var(--text-muted)' }}>Pendientes</span>
-                </div>
-              </div>
-            </div>
-
-            {recentAppointments.length > 0 ? (
-              <div className="space-y-3">
-                {recentAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
-                    <div>
-                      <p className="font-medium text-sm" style={{ color: 'var(--text)' }}>{appointment.cliente_nombre}</p>
-                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {new Date(appointment.fecha_inicio).toLocaleString('es-ES', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium" style={{ color: 'var(--text)' }}>
-                        {formatCurrency(appointment.precio_total || 0)}
-                      </p>
-                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {appointment.estado}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center py-4" style={{ color: 'var(--text-muted)' }}>
-                No hay citas recientes
-              </p>
-            )}
+      <section className="hero-banner">
+        <div>
+          <p className="eyebrow">TRINITY control center</p>
+          <h2>Bienvenida, {user?.nombre || user?.email?.split('@')[0]}</h2>
+          <p>
+            Vista general del salón con ingresos reales, rendimiento operativo y seguimiento de citas
+            sin depender de datos simulados.
+          </p>
+        </div>
+        <div className="hero-banner__stats">
+          <div>
+            <span className="hero-banner__label">Citas completadas</span>
+            <strong>{general.citas_completadas_periodo || 0}</strong>
+          </div>
+          <div>
+            <span className="hero-banner__label">Tasa de cierre</span>
+            <strong>{completionRate}%</strong>
+          </div>
+          <div>
+            <span className="hero-banner__label">Ticket promedio</span>
+            <strong>{formatCurrency(ingresos.ingreso_promedio_cita || 0)}</strong>
           </div>
         </div>
+      </section>
 
-        {/* Servicios más populares */}
-        <div className="card">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text)' }}>
-              Servicios Más Populares
-            </h3>
-            
-            <div className="space-y-3">
-              {topServices.map((servicio, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
+      {error && <Alert type="error" message={error} onClose={() => setError('')} className="mb-6" />}
+
+      <section className="stats-grid">
+        {metricCards.map(({ key, label, icon: Icon }) => (
+          <article className="metric-card" key={key}>
+            <div className="metric-card__icon">
+              <Icon size={18} />
+            </div>
+            <div>
+              <span className="metric-card__label">{label}</span>
+              <strong className="metric-card__value">{metricValues[key]}</strong>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="dashboard-grid">
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <p className="eyebrow">Agenda</p>
+              <h3>Citas recientes</h3>
+            </div>
+            <div className="panel__summary">
+              <Clock3 size={16} />
+              <span>{recentAppointments.length} registros</span>
+            </div>
+          </div>
+
+          {recentAppointments.length ? (
+            <div className="list-stack">
+              {recentAppointments.map((appointment) => (
+                <div key={appointment.id} className="list-item">
                   <div>
-                    <p className="font-medium text-sm" style={{ color: 'var(--text)' }}>{servicio.nombre}</p>
-                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatCurrency(servicio.precio)}</p>
+                    <strong>{appointment.cliente_nombre}</strong>
+                    <span>
+                      {new Date(appointment.fecha_inicio).toLocaleString('es-MX', {
+                        day: '2-digit',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                    <small>{appointment.servicios?.join(', ') || 'Sin servicios'}</small>
                   </div>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--primary)' }}>
-                    {servicio.total_citas} citas
-                  </span>
+                  <div className="list-item__meta">
+                    <StatusBadge status={appointment.estado} />
+                    <strong>{formatCurrency(appointment.precio_total || 0)}</strong>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className="empty-panel">No hay citas recientes para mostrar.</div>
+          )}
+        </article>
 
-        {/* Estilistas destacados */}
-        <div className="card">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text)' }}>
-              Estilistas Destacados
-            </h3>
-            
-            <div className="space-y-3">
-              {topStylists.map((estilista, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
-                  <div>
-                    <p className="font-medium text-sm" style={{ color: 'var(--text)' }}>{estilista.nombre || estilista.email}</p>
-                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{formatCurrency(estilista.ingresos_generados)}</p>
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <p className="eyebrow">Demanda</p>
+              <h3>Servicios más solicitados</h3>
+            </div>
+            <div className="panel__summary">
+              <Star size={16} />
+              <span>Top 5</span>
+            </div>
+          </div>
+
+          {topServicios.length ? (
+            <div className="bar-list">
+              {topServicios.map((service) => (
+                <div className="bar-list__item" key={service.nombre}>
+                  <div className="bar-list__row">
+                    <strong>{service.nombre}</strong>
+                    <span>{service.total_citas} citas</span>
                   </div>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--primary)' }}>
-                    Ingresos
-                  </span>
+                  <div className="bar-track">
+                    <span style={{ width: `${Math.max(service.porcentaje || 8, 8)}%` }} />
+                  </div>
+                  <small>{formatCurrency(service.ingresos || service.precio || 0)}</small>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className="empty-panel">Todavía no hay suficientes citas completadas para este ranking.</div>
+          )}
+        </article>
 
-        {/* Resumen rápido */}
-        <div className="card">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text)' }}>
-              Resumen Rápido
-            </h3>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span style={{ color: 'var(--text-muted)' }}>Promedio por cita:</span>
-                <span className="font-semibold" style={{ color: 'var(--text)' }}>
-                  {formatCurrency(stats?.promedio_por_cita || 0)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span style={{ color: 'var(--text-muted)' }}>Tasa de ocupación:</span>
-                <span className="font-semibold" style={{ color: 'var(--success)' }}>
-                  {stats?.tasa_ocupacion || 0}%
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span style={{ color: 'var(--text-muted)' }}>Clientes nuevos:</span>
-                <span className="font-semibold" style={{ color: 'var(--primary)' }}>
-                  {stats?.clientes_nuevos || 0}
-                </span>
-              </div>
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <p className="eyebrow">Rendimiento</p>
+              <h3>Estilistas destacados</h3>
+            </div>
+            <div className="panel__summary">
+              <CheckCircle2 size={16} />
+              <span>Por ingresos</span>
             </div>
           </div>
-        </div>
-      </div>
+
+          {topEstilistas.length ? (
+            <div className="list-stack">
+              {topEstilistas.map((stylist) => (
+                <div className="list-item" key={stylist.email}>
+                  <div>
+                    <strong>{stylist.nombre || stylist.email}</strong>
+                    <span>{stylist.total_citas} citas completadas</span>
+                  </div>
+                  <div className="list-item__meta">
+                    <strong>{formatCurrency(stylist.ingresos_generados || 0)}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-panel">Aún no hay estilistas con ingresos registrados en el período.</div>
+          )}
+        </article>
+
+        <article className="panel">
+          <div className="panel__header">
+            <div>
+              <p className="eyebrow">Salud operativa</p>
+              <h3>Estado del sistema</h3>
+            </div>
+            <div className="panel__summary">
+              <Ban size={16} />
+              <span>Prioridades</span>
+            </div>
+          </div>
+
+          <div className="check-grid">
+            <div className="check-card">
+              <span>Pendientes</span>
+              <strong>{general.citas_pendientes || 0}</strong>
+            </div>
+            <div className="check-card">
+              <span>Confirmadas</span>
+              <strong>{general.citas_confirmadas || 0}</strong>
+            </div>
+            <div className="check-card">
+              <span>Canceladas</span>
+              <strong>{general.citas_canceladas_periodo || 0}</strong>
+            </div>
+            <div className="check-card">
+              <span>Estilistas activos</span>
+              <strong>{general.total_estilistas || 0}</strong>
+            </div>
+          </div>
+
+          <div className="module-note">
+            Inventario, ventas/POS y notificaciones ya tienen base estructural en la BD, pero siguen pendientes
+            como módulos funcionales completos.
+          </div>
+        </article>
+      </section>
     </Layout>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, UserCog, Mail, Shield, Eye, EyeOff, Key } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, UserCog, Mail, Eye, EyeOff, Key } from 'lucide-react';
 import Layout from '../components/Layout/Layout';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
@@ -27,6 +27,7 @@ const Users = () => {
     nombre: '',
     email: '',
     role: 'estilista',
+    password: '',
     activo: true
   });
 
@@ -61,7 +62,8 @@ const Users = () => {
       setError('');
 
       if (editingUser) {
-        await apiService.updateUser(editingUser.id, formData);
+        const { password, ...rest } = formData;
+        await apiService.updateUser(editingUser.id, rest);
         setSuccess('Usuario actualizado correctamente');
       } else {
         await apiService.createUser(formData);
@@ -83,6 +85,7 @@ const Users = () => {
       nombre: user.nombre || '',
       email: user.email || '',
       role: user.role || 'estilista',
+      password: '',
       activo: user.activo !== false
     });
     setShowModal(true);
@@ -112,7 +115,7 @@ const Users = () => {
     }
 
     try {
-      await apiService.updateUser(userId, { activo: !currentStatus });
+      await apiService.toggleUserStatus(userId);
       setSuccess(`Usuario ${!currentStatus ? 'activado' : 'desactivado'} correctamente`);
       loadUsers();
     } catch (err) {
@@ -149,6 +152,7 @@ const Users = () => {
       nombre: '',
       email: '',
       role: 'estilista',
+      password: '',
       activo: true
     });
   };
@@ -298,6 +302,9 @@ const Users = () => {
                           <div className="ml-4">
                             <div className="text-sm font-medium" style={{ color: 'var(--text)' }}>
                               {user.nombre}
+                            </div>
+                            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                              {user.total_citas_asignadas || 0} citas asignadas
                             </div>
                             {user.id === currentUser.id && (
                               <div className="text-xs" style={{ color: 'var(--primary)' }}>(Tú)</div>
@@ -453,6 +460,22 @@ const Users = () => {
                   ))}
                 </select>
               </div>
+              {!editingUser && (
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
+                    Contraseña *
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength="6"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="input w-full"
+                    placeholder="Mínimo 6 caracteres"
+                  />
+                </div>
+              )}
               <div className="flex items-center">
                 <input
                   type="checkbox"

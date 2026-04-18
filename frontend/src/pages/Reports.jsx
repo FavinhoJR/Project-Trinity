@@ -1,366 +1,408 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart3, DollarSign, Calendar, Users, TrendingUp, Download, Filter } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Download, Filter, TrendingUp, Users, CalendarRange, DollarSign } from 'lucide-react';
 import Layout from '../components/Layout/Layout';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Alert from '../components/Common/Alert';
 import apiService from '../services/api';
 import { formatCurrency } from '../utils/currency';
 
+function toDateInputValue(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function exportToCSV(data, filename) {
+  if (!data?.length) {
+    return;
+  }
+
+  const headers = Object.keys(data[0]);
+  const csvContent = [
+    headers.join(','),
+    ...data.map((row) =>
+      headers
+        .map((header) => `"${String(row[header] ?? '').replace(/"/g, '""')}"`)
+        .join(',')
+    )
+  ].join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 const Reports = () => {
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [dashboardStats, setDashboardStats] = useState(null);
   const [revenueData, setRevenueData] = useState([]);
-  const [appointmentsData, setAppointmentsData] = useState([]);
-  const [clientsData, setClientsData] = useState([]);
+  const [appointmentsData, setAppointmentsData] = useState(null);
+  const [clientsData, setClientsData] = useState(null);
+  const [stylists, setStylists] = useState([]);
   const [filters, setFilters] = useState({
     periodo: '30',
-    fecha_desde: '',
-    fecha_hasta: '',
+    fecha_inicio: toDateInputValue(thirtyDaysAgo),
+    fecha_fin: toDateInputValue(today),
     estilista_id: ''
   });
 
   useEffect(() => {
-    loadDashboardStats();
+    const loadOverview = async () => {
+      try {
+        setLoading(true);
+        const [stats, stylistsData] = await Promise.all([
+          apiService.getDashboardStats(filters.periodo),
+          apiService.getStylists()
+        ]);
+
+        setDashboardStats(stats);
+        setStylists(stylistsData || []);
+      } catch (loadError) {
+        setError(loadError.message || 'No se pudieron cargar los reportes');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOverview();
   }, [filters.periodo]);
 
   useEffect(() => {
-    if (filters.fecha_desde && filters.fecha_hasta) {
-      loadDetailedReports();
+    const loadDetailedReports = async () => {
+      try {
+        const params = {
+          fecha_inicio: filters.fecha_inicio,
+          fecha_fin: filters.fecha_fin,
+          estilista_id: filters.estilista_id || undefined
+        };
+
+        const [revenue, appointments, clients] = await Promise.all([
+          apiService.getRevenueReport(params),
+          apiService.getAppointmentsReport(params),
+          apiService.getClientsReport(params)
+        ]);
+
+        setRevenueData(revenue?.datos || []);
+        setAppointmentsData(appointments);
+        setClientsData(clients);
+      } catch (loadError) {
+        setError(loadError.message || 'No se pudieron cargar los reportes detallados');
+      }
+    };
+
+    loadDetailedReports();
+  }, [filters.fecha_inicio, filters.fecha_fin, filters.estilista_id]);
+
+  const general = dashboardStats?.estadisticas_generales || {};
+  const ingresos = dashboardStats?.ingresos || {};
+  const topServicios = dashboardStats?.top_servicios || [];
+  const frequentClients = clientsData?.clientes_frecuentes || [];
+  const appointmentStatusRows = appointmentsData?.resumen_por_estado || [];
+
+  const overviewCards = [
+    {
+      label: 'Ingresos cerrados',
+      value: formatCurrency(ingresos.ingresos_totales || 0),
+      icon: DollarSign
+    },
+    {
+      label: 'Clientes activos',
+      value: general.total_clientes || 0,
+      icon: Users
+    },
+    {
+      label: 'Citas período',
+      value: general.citas_periodo || 0,
+      icon: CalendarRange
+    },
+    {
+      label: 'Ticket promedio',
+      value: formatCurrency(ingresos.ingreso_promedio_cita || 0),
+      icon: TrendingUp
     }
-  }, [filters.fecha_desde, filters.fecha_hasta, filters.estilista_id]);
-
-  const loadDashboardStats = async () => {
-    try {
-      setLoading(true);
-      const data = await apiService.getDashboardStats(filters.periodo);
-      setDashboardStats(data);
-    } catch (err) {
-      setError('Error al cargar estadísticas: ' + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadDetailedReports = async () => {
-    try {
-      const params = {
-        fecha_desde: filters.fecha_desde,
-        fecha_hasta: filters.fecha_hasta,
-        estilista_id: filters.estilista_id
-      };
-
-      const [revenue, appointments, clients] = await Promise.all([
-        apiService.getRevenueReport(params),
-        apiService.getAppointmentsReport(params),
-        apiService.getClientsReport(params)
-      ]);
-
-      setRevenueData(revenue);
-      setAppointmentsData(appointments);
-      setClientsData(clients);
-    } catch (err) {
-      setError('Error al cargar reportes detallados: ' + err.message);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('es-GT');
-  };
-
-  const exportToCSV = (data, filename) => {
-    if (!data || data.length === 0) return;
-
-    const headers = Object.keys(data[0]);
-    const csvContent = [
-      headers.join(','),
-      ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-
-  const StatCard = ({ title, value, icon: Icon, color = 'blue', trend = null }) => (
-    <div className="card">
-      <div className="p-6">
-        <div className="flex items-center">
-          <div className="p-3 rounded-full" style={{ backgroundColor: 'var(--primary-light)' }}>
-            <Icon className="w-6 h-6" style={{ color: 'var(--primary)' }} />
-          </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>{title}</p>
-            <p className="text-2xl font-semibold" style={{ color: 'var(--text)' }}>{value}</p>
-            {trend && (
-              <p className="text-sm" style={{ color: trend > 0 ? 'var(--success)' : 'var(--error)' }}>
-                {trend > 0 ? '+' : ''}{trend}% vs período anterior
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  ];
 
   return (
     <Layout title="Reportes y Estadísticas">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <section className="hero-banner reports-hero">
+        <div>
+          <p className="eyebrow">Análisis y control</p>
+          <h2>Reportes operativos con datos reales</h2>
+          <p>
+            Seguimiento de ingresos, comportamiento de clientes y productividad del equipo con filtros
+            listos para trabajo académico y demostraciones.
+          </p>
+        </div>
+        <div className="hero-banner__stats">
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>Reportes y Estadísticas</h1>
-            <p style={{ color: 'var(--text-muted)' }}>Análisis detallado del rendimiento del salón</p>
+            <span className="hero-banner__label">Período rápido</span>
+            <strong>{filters.periodo} días</strong>
+          </div>
+          <div>
+            <span className="hero-banner__label">Citas facturadas</span>
+            <strong>{ingresos.citas_facturadas || 0}</strong>
+          </div>
+          <div>
+            <span className="hero-banner__label">Top servicio</span>
+            <strong>{topServicios[0]?.nombre || 'Sin datos'}</strong>
+          </div>
+        </div>
+      </section>
+
+      {error && <Alert type="error" message={error} onClose={() => setError('')} className="mb-6" />}
+
+      <section className="panel filters-panel">
+        <div className="panel__header">
+          <div>
+            <p className="eyebrow">Filtros</p>
+            <h3>Rango y enfoque</h3>
+          </div>
+          <div className="panel__summary">
+            <Filter size={16} />
+            <span>Ajusta el período del informe</span>
           </div>
         </div>
 
-        {/* Alerts */}
-        {error && <Alert type="error" message={error} onClose={() => setError('')} />}
+        <div className="filters-grid">
+          <label className="form-group">
+            <span className="label">Período rápido</span>
+            <select
+              className="select"
+              value={filters.periodo}
+              onChange={(event) => setFilters((current) => ({ ...current, periodo: event.target.value }))}
+            >
+              <option value="7">Últimos 7 días</option>
+              <option value="30">Últimos 30 días</option>
+              <option value="90">Últimos 90 días</option>
+              <option value="365">Último año</option>
+            </select>
+          </label>
 
-        {/* Filters */}
-        <div className="card">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Filter className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
-              <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Filtros</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
-                  Período Rápido
-                </label>
-                <select
-                  value={filters.periodo}
-                  onChange={(e) => setFilters({ ...filters, periodo: e.target.value })}
-                  className="input w-full"
-                >
-                  <option value="7">Últimos 7 días</option>
-                  <option value="30">Últimos 30 días</option>
-                  <option value="90">Últimos 90 días</option>
-                  <option value="365">Último año</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
-                  Fecha Desde
-                </label>
-                <input
-                  type="date"
-                  value={filters.fecha_desde}
-                  onChange={(e) => setFilters({ ...filters, fecha_desde: e.target.value })}
-                  className="input w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
-                  Fecha Hasta
-                </label>
-                <input
-                  type="date"
-                  value={filters.fecha_hasta}
-                  onChange={(e) => setFilters({ ...filters, fecha_hasta: e.target.value })}
-                  className="input w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text)' }}>
-                  Estilista
-                </label>
-                <select
-                  value={filters.estilista_id}
-                  onChange={(e) => setFilters({ ...filters, estilista_id: e.target.value })}
-                  className="input w-full"
-                >
-                  <option value="">Todos los estilistas</option>
-                  {/* Aquí se cargarían los estilistas */}
-                </select>
-              </div>
-            </div>
-          </div>
+          <label className="form-group">
+            <span className="label">Fecha inicio</span>
+            <input
+              className="input"
+              type="date"
+              value={filters.fecha_inicio}
+              onChange={(event) => setFilters((current) => ({ ...current, fecha_inicio: event.target.value }))}
+            />
+          </label>
+
+          <label className="form-group">
+            <span className="label">Fecha fin</span>
+            <input
+              className="input"
+              type="date"
+              value={filters.fecha_fin}
+              onChange={(event) => setFilters((current) => ({ ...current, fecha_fin: event.target.value }))}
+            />
+          </label>
+
+          <label className="form-group">
+            <span className="label">Estilista</span>
+            <select
+              className="select"
+              value={filters.estilista_id}
+              onChange={(event) => setFilters((current) => ({ ...current, estilista_id: event.target.value }))}
+            >
+              <option value="">Todos</option>
+              {stylists.map((stylist) => (
+                <option key={stylist.id} value={stylist.id}>
+                  {stylist.nombre || stylist.email}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
+      </section>
 
-        {/* Dashboard Stats */}
-        {loading ? (
-          <div className="flex justify-center p-8">
-            <LoadingSpinner />
-          </div>
-        ) : dashboardStats ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard
-              title="Total Clientes"
-              value={dashboardStats.total_clientes || 0}
-              icon={Users}
-              color="blue"
-            />
-            <StatCard
-              title="Estilistas Activos"
-              value={dashboardStats.total_estilistas || 0}
-              icon={Users}
-              color="green"
-            />
-            <StatCard
-              title="Servicios Disponibles"
-              value={dashboardStats.total_servicios || 0}
-              icon={BarChart3}
-              color="purple"
-            />
-            <StatCard
-              title="Citas del Período"
-              value={dashboardStats.citas_periodo || 0}
-              icon={Calendar}
-              color="orange"
-            />
-            <StatCard
-              title="Ingresos Totales"
-              value={formatCurrency(dashboardStats.ingresos_periodo || 0)}
-              icon={DollarSign}
-              color="green"
-            />
-            <StatCard
-              title="Promedio por Cita"
-              value={formatCurrency(dashboardStats.promedio_por_cita || 0)}
-              icon={TrendingUp}
-              color="blue"
-            />
-            <StatCard
-              title="Tasa de Ocupación"
-              value={`${dashboardStats.tasa_ocupacion || 0}%`}
-              icon={BarChart3}
-              color="purple"
-            />
-            <StatCard
-              title="Clientes Nuevos"
-              value={dashboardStats.clientes_nuevos || 0}
-              icon={Users}
-              color="orange"
-            />
-          </div>
-        ) : null}
+      {loading ? (
+        <div className="loading-panel">
+          <LoadingSpinner size="lg" />
+        </div>
+      ) : (
+        <>
+          <section className="stats-grid">
+            {overviewCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <article className="metric-card" key={card.label}>
+                  <div className="metric-card__icon">
+                    <Icon size={18} />
+                  </div>
+                  <div>
+                    <span className="metric-card__label">{card.label}</span>
+                    <strong className="metric-card__value">{card.value}</strong>
+                  </div>
+                </article>
+              );
+            })}
+          </section>
 
-        {/* Detailed Reports */}
-        {filters.fecha_desde && filters.fecha_hasta && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top Services */}
-            <div className="card">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Servicios Más Populares</h3>
-                  <button
-                    onClick={() => exportToCSV(dashboardStats.top_servicios, 'servicios_populares.csv')}
-                    className="btn btn-sm btn-outline flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Exportar
-                  </button>
+          <section className="dashboard-grid">
+            <article className="panel">
+              <div className="panel__header">
+                <div>
+                  <p className="eyebrow">Ingresos</p>
+                  <h3>Evolución del rango</h3>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead style={{ backgroundColor: 'var(--primary-light)' }}>
+                <button className="btn btn-secondary" onClick={() => exportToCSV(revenueData, 'reporte_ingresos.csv')}>
+                  <Download size={16} />
+                  Exportar
+                </button>
+              </div>
+
+              {revenueData.length ? (
+                <div className="bar-list">
+                  {revenueData.map((row) => (
+                    <div className="bar-list__item" key={row.fecha}>
+                      <div className="bar-list__row">
+                        <strong>{new Date(row.fecha).toLocaleDateString('es-MX')}</strong>
+                        <span>{row.total_citas} citas</span>
+                      </div>
+                      <div className="bar-track">
+                        <span
+                          style={{
+                            width: `${Math.max(
+                              (Number(row.ingresos_totales || 0) /
+                                Math.max(...revenueData.map((item) => Number(item.ingresos_totales || 0)), 1)) *
+                                100,
+                              6
+                            )}%`
+                          }}
+                        />
+                      </div>
+                      <small>{formatCurrency(row.ingresos_totales || 0)}</small>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-panel">No hay ingresos cerrados en el rango seleccionado.</div>
+              )}
+            </article>
+
+            <article className="panel">
+              <div className="panel__header">
+                <div>
+                  <p className="eyebrow">Agenda</p>
+                  <h3>Distribución por estado</h3>
+                </div>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => exportToCSV(appointmentStatusRows, 'reporte_estados_citas.csv')}
+                >
+                  <Download size={16} />
+                  Exportar
+                </button>
+              </div>
+
+              {appointmentStatusRows.length ? (
+                <div className="list-stack">
+                  {appointmentStatusRows.map((row) => (
+                    <div className="list-item" key={row.estado}>
+                      <div>
+                        <strong>{row.estado}</strong>
+                        <span>{row.total} citas</span>
+                      </div>
+                      <div className="list-item__meta">
+                        <strong>{formatCurrency(row.ingresos_potenciales || 0)}</strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-panel">No hay datos de citas para este rango.</div>
+              )}
+            </article>
+
+            <article className="panel">
+              <div className="panel__header">
+                <div>
+                  <p className="eyebrow">Servicios</p>
+                  <h3>Top del período</h3>
+                </div>
+                <button className="btn btn-secondary" onClick={() => exportToCSV(topServicios, 'top_servicios.csv')}>
+                  <Download size={16} />
+                  Exportar
+                </button>
+              </div>
+
+              {topServicios.length ? (
+                <div className="bar-list">
+                  {topServicios.map((service) => (
+                    <div className="bar-list__item" key={service.nombre}>
+                      <div className="bar-list__row">
+                        <strong>{service.nombre}</strong>
+                        <span>{service.total_citas} citas</span>
+                      </div>
+                      <div className="bar-track">
+                        <span style={{ width: `${Math.max(service.porcentaje || 8, 8)}%` }} />
+                      </div>
+                      <small>{formatCurrency(service.ingresos || 0)}</small>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-panel">Todavía no hay suficientes servicios completados para rankear.</div>
+              )}
+            </article>
+
+            <article className="panel">
+              <div className="panel__header">
+                <div>
+                  <p className="eyebrow">Clientes</p>
+                  <h3>Clientes frecuentes</h3>
+                </div>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => exportToCSV(frequentClients, 'clientes_frecuentes.csv')}
+                >
+                  <Download size={16} />
+                  Exportar
+                </button>
+              </div>
+
+              {frequentClients.length ? (
+                <div className="table-shell">
+                  <table className="table">
+                    <thead>
                       <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Servicio</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Citas Realizadas</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Ingresos</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>% del Total</th>
+                        <th>Cliente</th>
+                        <th>Citas</th>
+                        <th>Total gastado</th>
+                        <th>Última visita</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {dashboardStats.top_servicios.map((service, index) => (
-                        <tr key={index}>
-                          <td className="px-4 py-2 text-sm font-medium" style={{ color: 'var(--text)' }}>{service.nombre}</td>
-                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{service.total_citas}</td>
-                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{formatCurrency(service.ingresos)}</td>
-                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{service.porcentaje}%</td>
+                      {frequentClients.slice(0, 8).map((client) => (
+                        <tr key={`${client.nombre}-${client.email || 'sin-email'}`}>
+                          <td>{client.nombre}</td>
+                          <td>{client.total_citas}</td>
+                          <td>{formatCurrency(client.total_gastado || 0)}</td>
+                          <td>
+                            {client.ultima_visita
+                              ? new Date(client.ultima_visita).toLocaleDateString('es-MX')
+                              : 'Sin visitas'}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
-            </div>
-
-            {/* Revenue Chart */}
-            <div className="card">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Ingresos por Día</h3>
-                  <button
-                    onClick={() => exportToCSV(revenueData, 'ingresos_diarios.csv')}
-                    className="btn btn-sm btn-outline flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Exportar
-                  </button>
-                </div>
-                <div className="h-64 flex items-center justify-center rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
-                  <p style={{ color: 'var(--text-muted)' }}>Gráfico de ingresos (implementar con Chart.js)</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Appointments Chart */}
-            <div className="card">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Citas por Estado</h3>
-                  <button
-                    onClick={() => exportToCSV(appointmentsData, 'citas_por_estado.csv')}
-                    className="btn btn-sm btn-outline flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Exportar
-                  </button>
-                </div>
-                <div className="h-64 flex items-center justify-center rounded-lg" style={{ backgroundColor: 'var(--primary-light)' }}>
-                  <p style={{ color: 'var(--text-muted)' }}>Gráfico de citas (implementar con Chart.js)</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Client Analysis */}
-            <div className="card">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text)' }}>Análisis de Clientes</h3>
-                  <button
-                    onClick={() => exportToCSV(clientsData, 'analisis_clientes.csv')}
-                    className="btn btn-sm btn-outline flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    Exportar
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead style={{ backgroundColor: 'var(--primary-light)' }}>
-                      <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Cliente</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Total Gastado</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Citas Realizadas</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium uppercase" style={{ color: 'var(--text-muted)' }}>Última Visita</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {clientsData.map((client, index) => (
-                        <tr key={index}>
-                          <td className="px-4 py-2 text-sm font-medium" style={{ color: 'var(--text)' }}>{client.nombre}</td>
-                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{formatCurrency(client.total_gastado)}</td>
-                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{client.total_citas}</td>
-                          <td className="px-4 py-2 text-sm" style={{ color: 'var(--text-muted)' }}>{formatDate(client.ultima_visita)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+              ) : (
+                <div className="empty-panel">No hay clientes con historial en este rango.</div>
+              )}
+            </article>
+          </section>
+        </>
+      )}
     </Layout>
   );
 };

@@ -36,7 +36,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="modal-overlay">
       {/* Backdrop */}
       <div 
         className="absolute inset-0"
@@ -45,7 +45,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }) => {
       />
       
       {/* Modal */}
-      <div className={`relative w-full ${getSizeClasses()} max-h-[90vh] overflow-y-auto`}>
+      <div className={`relative w-full ${getSizeClasses()} overflow-y-auto`} style={{ maxHeight: '90vh' }}>
         <div className="card">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'var(--border)' }}>

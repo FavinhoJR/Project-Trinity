@@ -1,143 +1,198 @@
 import { Router } from 'express';
+
 const router = Router();
 
-// GET /services - Listar servicios
+function toPositiveInt(value, fallback) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function parseBooleanParam(value) {
+  if (value === undefined || value === null || value === '' || value === 'all') {
+    return null;
+  }
+
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  if (String(value).toLowerCase() === 'true') {
+    return true;
+  }
+
+  if (String(value).toLowerCase() === 'false') {
+    return false;
+  }
+
+  return null;
+}
+
+router.get('/categories/list', async (req, res) => {
+  const db = req.app.get('db');
+
+  try {
+    const result = await db.query(
+      `SELECT categoria, COUNT(*) AS total_servicios
+       FROM servicios
+       WHERE categoria IS NOT NULL AND categoria <> ''
+       GROUP BY categoria
+       ORDER BY categoria`
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/', async (req, res) => {
   const db = req.app.get('db');
-  const { q = '', activo = null, page = 1, limit = 50 } = req.query;
+  const q = req.query.q?.trim() || '';
+  const activo = parseBooleanParam(req.query.activo);
+  const page = toPositiveInt(req.query.page, 1);
+  const limit = Math.min(toPositiveInt(req.query.limit, 20), 100);
   const offset = (page - 1) * limit;
-  
+
+  const conditions = [];
+  const params = [];
+
+  if (q) {
+    params.push(`%${q}%`);
+    conditions.push(
+      `(LOWER(s.nombre) LIKE LOWER($${params.length})
+        OR COALESCE(LOWER(s.descripcion), '') LIKE LOWER($${params.length})
+        OR COALESCE(LOWER(s.categoria), '') LIKE LOWER($${params.length}))`
+    );
+  }
+
+  if (activo !== null) {
+    params.push(activo);
+    conditions.push(`s.activo = $${params.length}`);
+  }
+
+  const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
   try {
-    let whereConditions = [];
-    let params = [];
-    let paramCount = 0;
-    
-    if (q) {
-      paramCount++;
-      whereConditions.push(`LOWER(nombre) LIKE LOWER($${paramCount})`);
-      params.push(`%${q}%`);
-    }
-    
-    if (activo !== null) {
-      paramCount++;
-      whereConditions.push(`activo = $${paramCount}`);
-      params.push(activo === 'true');
-    }
-    
-    const whereClause = whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : '';
-    
     params.push(limit, offset);
-    
-    const query = `
-      SELECT s.*, 
-             COUNT(sc.cita_id) as total_citas_realizadas
-      FROM servicios s
-      LEFT JOIN servicio_citas sc ON sc.servicio_id = s.id
-      LEFT JOIN citas c ON c.id = sc.cita_id AND c.estado = 'completada'
-      ${whereClause}
-      GROUP BY s.id
-      ORDER BY s.nombre
-      LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
-    `;
-    
-    const result = await db.query(query, params);
-    
-    // Contar total
-    const countQuery = `SELECT COUNT(*) FROM servicios ${whereClause}`;
-    const countResult = await db.query(countQuery, params.slice(0, paramCount));
-    
+
+    const result = await db.query(
+      `SELECT
+         s.*,
+         COUNT(c.id) FILTER (WHERE c.estado = 'completada') AS total_citas_realizadas,
+         COUNT(c.id) FILTER (WHERE c.estado IN ('pendiente', 'confirmada')) AS citas_pendientes
+       FROM servicios s
+       LEFT JOIN servicio_citas sc ON sc.servicio_id = s.id
+       LEFT JOIN citas c ON c.id = sc.cita_id
+       ${whereClause}
+       GROUP BY s.id
+       ORDER BY s.activo DESC, s.nombre
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+
+    const countResult = await db.query(
+      `SELECT COUNT(*) FROM servicios s ${whereClause}`,
+      params.slice(0, params.length - 2)
+    );
+
     res.json({
       services: result.rows,
-      total: parseInt(countResult.rows[0].count),
-      page: parseInt(page),
-      limit: parseInt(limit)
+      total: Number.parseInt(countResult.rows[0].count, 10),
+      page,
+      limit
     });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-// GET /services/:id - Obtener servicio específico
 router.get('/:id', async (req, res) => {
   const db = req.app.get('db');
-  const { id } = req.params;
-  
+  const id = Number.parseInt(req.params.id, 10);
+
+  if (!Number.isFinite(id)) {
+    return res.status(400).json({ error: 'ID de servicio inv\u00e1lido' });
+  }
+
   try {
-    const result = await db.query(`
-      SELECT s.*, 
-             COUNT(sc.cita_id) as total_citas,
-             AVG(CASE WHEN c.estado = 'completada' THEN s.precio END) as precio_promedio_completadas
-      FROM servicios s
-      LEFT JOIN servicio_citas sc ON sc.servicio_id = s.id
-      LEFT JOIN citas c ON c.id = sc.cita_id
-      WHERE s.id = $1
-      GROUP BY s.id
-    `, [id]);
-    
-    if (result.rows.length === 0) {
+    const result = await db.query(
+      `SELECT
+         s.*,
+         COUNT(c.id) AS total_citas,
+         COUNT(c.id) FILTER (WHERE c.estado = 'completada') AS total_citas_completadas,
+         COALESCE(SUM(CASE WHEN c.estado = 'completada' THEN s.precio ELSE 0 END), 0) AS ingresos_generados
+       FROM servicios s
+       LEFT JOIN servicio_citas sc ON sc.servicio_id = s.id
+       LEFT JOIN citas c ON c.id = sc.cita_id
+       WHERE s.id = $1
+       GROUP BY s.id`,
+      [id]
+    );
+
+    if (!result.rows.length) {
       return res.status(404).json({ error: 'Servicio no encontrado' });
     }
-    
+
     res.json(result.rows[0]);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-// POST /services - Crear servicio
 router.post('/', async (req, res) => {
   const db = req.app.get('db');
   const { nombre, descripcion, duracion_min, precio, activo = true, categoria } = req.body;
-  
-  if (!nombre || !duracion_min || precio === undefined) {
-    return res.status(400).json({ 
-      error: 'nombre, duracion_min y precio son requeridos' 
-    });
+
+  if (!nombre?.trim() || duracion_min === undefined || precio === undefined) {
+    return res.status(400).json({ error: 'nombre, duracion_min y precio son requeridos' });
   }
-  
-  if (duracion_min <= 0) {
-    return res.status(400).json({ error: 'La duración debe ser mayor a 0' });
+
+  if (Number(duracion_min) <= 0) {
+    return res.status(400).json({ error: 'La duraci\u00f3n debe ser mayor a 0' });
   }
-  
-  if (precio < 0) {
+
+  if (Number(precio) < 0) {
     return res.status(400).json({ error: 'El precio no puede ser negativo' });
   }
-  
+
   try {
     const result = await db.query(
-      `INSERT INTO servicios (nombre, descripcion, duracion_min, precio, activo, categoria) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
+      `INSERT INTO servicios (nombre, descripcion, duracion_min, precio, activo, categoria)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [nombre, descripcion, duracion_min, precio, activo, categoria]
+      [nombre.trim(), descripcion || null, duracion_min, precio, activo, categoria || null]
     );
-    
+
     res.status(201).json(result.rows[0]);
-  } catch (e) {
-    if (e.code === '23505') {
-      res.status(400).json({ error: 'Ya existe un servicio con ese nombre' });
-    } else {
-      res.status(500).json({ error: e.message });
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Ya existe un servicio con ese nombre' });
     }
+
+    res.status(500).json({ error: error.message });
   }
 });
 
-// PUT /services/:id - Actualizar servicio
 router.put('/:id', async (req, res) => {
   const db = req.app.get('db');
-  const { id } = req.params;
+  const id = Number.parseInt(req.params.id, 10);
   const { nombre, descripcion, duracion_min, precio, activo, categoria } = req.body;
-  
-  if (duracion_min !== undefined && duracion_min <= 0) {
-    return res.status(400).json({ error: 'La duración debe ser mayor a 0' });
+
+  if (!Number.isFinite(id)) {
+    return res.status(400).json({ error: 'ID de servicio inv\u00e1lido' });
   }
-  
-  if (precio !== undefined && precio < 0) {
+
+  if (duracion_min !== undefined && Number(duracion_min) <= 0) {
+    return res.status(400).json({ error: 'La duraci\u00f3n debe ser mayor a 0' });
+  }
+
+  if (precio !== undefined && Number(precio) < 0) {
     return res.status(400).json({ error: 'El precio no puede ser negativo' });
   }
-  
+
   try {
     const result = await db.query(
-      `UPDATE servicios 
+      `UPDATE servicios
        SET nombre = COALESCE($1, nombre),
            descripcion = COALESCE($2, descripcion),
            duracion_min = COALESCE($3, duracion_min),
@@ -146,74 +201,59 @@ router.put('/:id', async (req, res) => {
            categoria = COALESCE($6, categoria)
        WHERE id = $7
        RETURNING *`,
-      [nombre, descripcion, duracion_min, precio, activo, categoria, id]
+      [nombre?.trim() || null, descripcion ?? null, duracion_min, precio, activo, categoria ?? null, id]
     );
-    
-    if (result.rows.length === 0) {
+
+    if (!result.rows.length) {
       return res.status(404).json({ error: 'Servicio no encontrado' });
     }
-    
+
     res.json(result.rows[0]);
-  } catch (e) {
-    if (e.code === '23505') {
-      res.status(400).json({ error: 'Ya existe un servicio con ese nombre' });
-    } else {
-      res.status(500).json({ error: e.message });
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Ya existe un servicio con ese nombre' });
     }
+
+    res.status(500).json({ error: error.message });
   }
 });
 
-// DELETE /services/:id - Eliminar servicio
 router.delete('/:id', async (req, res) => {
   const db = req.app.get('db');
-  const { id } = req.params;
-  
+  const id = Number.parseInt(req.params.id, 10);
+
+  if (!Number.isFinite(id)) {
+    return res.status(400).json({ error: 'ID de servicio inv\u00e1lido' });
+  }
+
   try {
-    // Verificar si tiene citas asociadas
     const citasResult = await db.query(
-      `SELECT COUNT(*) FROM servicio_citas sc
+      `SELECT COUNT(*)
+       FROM servicio_citas sc
        JOIN citas c ON c.id = sc.cita_id
-       WHERE sc.servicio_id = $1 AND c.estado IN ('pendiente', 'confirmada')`,
+       WHERE sc.servicio_id = $1
+         AND c.estado IN ('pendiente', 'confirmada')`,
       [id]
     );
-    
-    if (parseInt(citasResult.rows[0].count) > 0) {
-      return res.status(400).json({ 
-        error: 'No se puede eliminar el servicio porque tiene citas pendientes o confirmadas' 
+
+    if (Number.parseInt(citasResult.rows[0].count, 10) > 0) {
+      return res.status(400).json({
+        error: 'No se puede eliminar el servicio porque tiene citas pendientes o confirmadas'
       });
     }
-    
+
     const result = await db.query(
       'DELETE FROM servicios WHERE id = $1 RETURNING id',
       [id]
     );
-    
-    if (result.rows.length === 0) {
+
+    if (!result.rows.length) {
       return res.status(404).json({ error: 'Servicio no encontrado' });
     }
-    
-    res.json({ message: 'Servicio eliminado correctamente' });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
 
-// GET /services/categories - Obtener categorías de servicios
-router.get('/categories/list', async (req, res) => {
-  const db = req.app.get('db');
-  
-  try {
-    const result = await db.query(`
-      SELECT categoria, COUNT(*) as total_servicios
-      FROM servicios 
-      WHERE categoria IS NOT NULL AND categoria != ''
-      GROUP BY categoria
-      ORDER BY categoria
-    `);
-    
-    res.json(result.rows);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.json({ message: 'Servicio eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
