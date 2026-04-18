@@ -2,17 +2,17 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copiar package files
+# Copiar dependencias del backend
 COPY package*.json ./
 
-# Instalar dependencias
-RUN npm ci --only=production
+# Instalar solo dependencias necesarias para ejecucion
+RUN npm ci --omit=dev
 
-# Copiar código fuente
+# Copiar codigo fuente
 COPY . .
 
-# Exponer puerto
+# Exponer puerto de la API
 EXPOSE 4000
 
-# Comando para iniciar la aplicación
+# Iniciar la aplicacion
 CMD ["node", "src/server.js"]
