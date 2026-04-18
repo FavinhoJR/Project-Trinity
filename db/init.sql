@@ -1,5 +1,5 @@
--- TODO: Add your DB schema/triggers he-- Esquema mínimo para arrancar TRINITY (usuarios, clientes, servicios, citas)
--- y evitar doble reserva por estilista.
+-- Esquema base de TRINITY para usuarios, clientes, servicios y citas.
+-- Incluye una proteccion para evitar dobles reservas por estilista.
 
 -- 1) USERS
 CREATE TABLE IF NOT EXISTS users (
@@ -152,7 +152,7 @@ CREATE TRIGGER trg_check_overlap_cita_upd
 BEFORE UPDATE OF fecha_inicio, duracion_min, estilista_id ON citas
 FOR EACH ROW EXECUTE FUNCTION check_overlap_cita();
 
--- 7) Datos básicos
+-- 7) Datos basicos
 -- admin (usa tu hash bcrypt provisto)
 INSERT INTO users (email, password_hash, role, nombre)
 VALUES ('admin@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'admin', 'Administrador')
@@ -160,27 +160,27 @@ ON CONFLICT (email) DO NOTHING;
 
 -- un estilista para probar agenda
 INSERT INTO users (email, password_hash, role, nombre)
-VALUES ('stylist@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'estilista', 'María Estilista')
+VALUES ('stylist@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'estilista', 'Maria Estilista')
 ON CONFLICT (email) DO NOTHING;
 
 -- recepcionista de ejemplo
 INSERT INTO users (email, password_hash, role, nombre)
-VALUES ('recepcion@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'recepcion', 'Ana Recepción')
+VALUES ('recepcion@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'recepcion', 'Ana Recepcion')
 ON CONFLICT (email) DO NOTHING;
 
 -- clientes de ejemplo
-INSERT INTO clientes (nombre, telefono, email) VALUES 
+INSERT INTO clientes (nombre, telefono, email) VALUES
 ('Cliente Demo', '555-000', 'cliente@demo.local'),
-('María García', '555-001', 'maria.garcia@email.com'),
-('Carlos López', '555-002', 'carlos.lopez@email.com')
+('Maria Garcia', '555-001', 'maria.garcia@email.com'),
+('Carlos Lopez', '555-002', 'carlos.lopez@email.com')
 ON CONFLICT (email) DO NOTHING;
 
 -- servicios de ejemplo
-INSERT INTO servicios (nombre, descripcion, duracion_min, precio, categoria) VALUES 
-('Corte básico', 'Corte de cabello estándar', 45, 75.00, 'Cortes'),
+INSERT INTO servicios (nombre, descripcion, duracion_min, precio, categoria) VALUES
+('Corte basico', 'Corte de cabello estandar', 45, 75.00, 'Cortes'),
 ('Corte y peinado', 'Corte de cabello con peinado incluido', 60, 95.00, 'Cortes'),
-('Tinte completo', 'Aplicación de tinte en todo el cabello', 120, 150.00, 'Coloración'),
-('Mechas', 'Aplicación de mechas', 90, 120.00, 'Coloración'),
-('Manicure', 'Cuidado completo de uñas', 30, 45.00, 'Uñas'),
-('Pedicure', 'Cuidado completo de pies', 45, 55.00, 'Uñas')
+('Tinte completo', 'Aplicacion de tinte en todo el cabello', 120, 150.00, 'Coloracion'),
+('Mechas', 'Aplicacion de mechas', 90, 120.00, 'Coloracion'),
+('Manicure', 'Cuidado completo de unas', 30, 45.00, 'Unas'),
+('Pedicure', 'Cuidado completo de pies', 45, 55.00, 'Unas')
 ON CONFLICT (nombre) DO NOTHING;

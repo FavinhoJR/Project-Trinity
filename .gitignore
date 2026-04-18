@@ -108,7 +108,7 @@ logs
 tmp/
 temp/
 
-# Guías y documentación de despliegue (solo para uso local)
+# Guias y documentacion de despliegue (solo para uso local)
 EMPIEZA_AQUI_FAVIO.md
 INSTRUCCIONES_INSTALACION.md
 VERIFICACION_ENTORNO.md

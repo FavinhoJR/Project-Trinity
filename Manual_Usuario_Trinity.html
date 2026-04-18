@@ -3,1831 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Usuario - Trinity Estética & SPA</title>
+    <title>Manual de Usuario - TRINITY</title>
     <style>
-        @page {
-            size: letter;
-            margin: 2.5cm;
-        }
         body {
-            font-family: 'Calibri', 'Arial', sans-serif;
+            font-family: "Segoe UI", Arial, sans-serif;
             line-height: 1.6;
-            color: #1a1a1a;
-            max-width: 21cm;
+            color: #1f1a16;
+            max-width: 960px;
             margin: 0 auto;
-            padding: 20px;
-            background: white;
+            padding: 32px 20px 60px;
+            background: #fffdf9;
         }
-        .portada {
-            text-align: center;
-            padding: 100px 0;
-            border-bottom: 4px solid #C4A962;
-            page-break-after: always;
+
+        h1, h2, h3 {
+            color: #9a6b39;
         }
-        .logo-title {
-            font-size: 48px;
-            font-weight: bold;
-            letter-spacing: 0.3em;
-            color: #C4A962;
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 20px;
-            letter-spacing: 0.2em;
-            color: #666;
-            margin-bottom: 50px;
-        }
-        .version {
-            font-size: 14px;
-            color: #999;
-            margin-top: 50px;
-        }
+
         h1 {
-            color: #C4A962;
-            font-size: 32px;
-            border-bottom: 3px solid #C4A962;
-            padding-bottom: 10px;
-            margin-top: 40px;
-            page-break-before: always;
+            font-size: 2.4rem;
+            margin-bottom: 0.2rem;
         }
+
         h2 {
-            color: #1a1a1a;
-            font-size: 24px;
-            margin-top: 30px;
-            border-left: 4px solid #C4A962;
-            padding-left: 15px;
+            margin-top: 2rem;
+            border-bottom: 2px solid #e9d4bc;
+            padding-bottom: 0.35rem;
         }
-        h3 {
-            color: #333;
-            font-size: 18px;
-            margin-top: 20px;
+
+        .hero {
+            padding: 32px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #f6eadc, #fff8ef);
+            border: 1px solid #ead6bf;
+            margin-bottom: 32px;
         }
-        .toc {
-            background: #f9f9f9;
+
+        .hero p {
+            margin: 0.35rem 0;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #eadfce;
+            border-radius: 16px;
             padding: 20px;
-            border-left: 4px solid #C4A962;
-            margin: 30px 0;
+            margin: 16px 0;
+            box-shadow: 0 10px 24px rgba(60, 38, 16, 0.04);
         }
-        .toc h2 {
-            border: none;
-            padding: 0;
-            margin-top: 0;
+
+        .note {
+            padding: 14px 16px;
+            border-left: 4px solid #b9894d;
+            background: #fbf3e8;
+            border-radius: 8px;
+            margin: 16px 0;
         }
-        .toc ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .toc li {
-            padding: 5px 0;
-            border-bottom: 1px dotted #ddd;
-        }
-        .toc li:last-child {
-            border-bottom: none;
-        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
+            margin-top: 16px;
         }
-        th {
-            background: #C4A962;
-            color: white;
-            padding: 12px;
+
+        th, td {
             text-align: left;
-            font-weight: bold;
+            padding: 12px;
+            border: 1px solid #eadfce;
         }
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
+
+        th {
+            background: #f6eadc;
         }
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-        .note {
-            background: #fff8e1;
-            border-left: 4px solid #ffa000;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .warning {
-            background: #ffebee;
-            border-left: 4px solid #c62828;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .tip {
-            background: #e8f5e9;
-            border-left: 4px solid #2e7d32;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .screenshot {
-            background: #f5f5f5;
-            border: 2px solid #ddd;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
-            font-style: italic;
-            color: #666;
-        }
-        ul, ol {
-            margin: 15px 0;
-            padding-left: 30px;
-        }
-        li {
-            margin: 8px 0;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 2px solid #C4A962;
-            color: #666;
-            font-size: 12px;
-        }
+
         code {
-            background: #f5f5f5;
+            background: #f4efe8;
             padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-        .step {
-            background: #f8f9fa;
-            border-left: 4px solid #C4A962;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        .step-number {
-            display: inline-block;
-            background: #C4A962;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            font-weight: bold;
-            margin-right: 10px;
+            border-radius: 6px;
         }
     </style>
 </head>
 <body>
-
-<!-- PORTADA -->
-<div class="portada">
-    <div class="logo-title">TRINITY</div>
-    <div class="subtitle">ESTÉTICA & SPA</div>
-    <h2 style="border: none; padding: 0; margin: 40px 0;">Manual de Usuario</h2>
-    <p style="font-size: 16px; color: #666;">Sistema de Gestión Integral</p>
-    <div class="version">
-        <p>Versión 1.0</p>
-        <p>© 2025 Trinity Estética & SPA</p>
-        <p>Todos los derechos reservados</p>
-    </div>
-</div>
-
-<!-- ÍNDICE -->
-<div class="toc">
-    <h2>Índice de Contenidos</h2>
-    <ul>
-        <li>1. Introducción al Sistema</li>
-        <li>2. Primeros Pasos</li>
-        <li>3. Dashboard Principal</li>
-        <li>4. Gestión de Citas</li>
-        <li>5. Gestión de Clientes</li>
-        <li>6. Gestión de Servicios</li>
-        <li>7. Gestión de Usuarios</li>
-        <li>8. Reportes y Estadísticas</li>
-        <li>9. Roles y Permisos</li>
-        <li>10. Preguntas Frecuentes</li>
-        <li>11. Solución de Problemas</li>
-        <li>12. Soporte Técnico</li>
-    </ul>
-</div>
-
-<!-- CAPÍTULO 1: INTRODUCCIÓN -->
-<h1>1. Introducción al Sistema</h1>
-
-<h2>1.1 ¿Qué es Trinity?</h2>
-<p>
-    <strong>Trinity Estética & SPA</strong> es un sistema integral de gestión diseñado específicamente 
-    para salones de belleza y spas. El sistema permite administrar de manera eficiente todos los aspectos 
-    de su negocio, desde la agenda de citas hasta el control de servicios, clientes y personal.
-</p>
-
-<h2>1.2 Características Principales</h2>
-<ul>
-    <li><strong>Dashboard Intuitivo:</strong> Visualice las métricas más importantes de su negocio en tiempo real</li>
-    <li><strong>Gestión de Citas:</strong> Programe, modifique y controle todas las citas con prevención automática de conflictos</li>
-    <li><strong>Base de Clientes:</strong> Mantenga un registro completo de sus clientes y su historial</li>
-    <li><strong>Catálogo de Servicios:</strong> Administre todos los servicios que ofrece su salón con precios actualizados</li>
-    <li><strong>Control de Personal:</strong> Gestione usuarios y asigne roles con permisos específicos</li>
-    <li><strong>Reportes Detallados:</strong> Acceda a estadísticas e informes para tomar decisiones informadas</li>
-    <li><strong>Sistema de Roles:</strong> Tres niveles de acceso (Administrador, Recepción, Estilista)</li>
-    <li><strong>Seguridad Avanzada:</strong> Autenticación segura con tokens JWT</li>
-</ul>
-
-<h2>1.3 Requisitos del Sistema</h2>
-<table>
-    <tr>
-        <th>Componente</th>
-        <th>Requisito</th>
-    </tr>
-    <tr>
-        <td>Navegador Web</td>
-        <td>Google Chrome, Firefox, Safari o Edge (versiones recientes)</td>
-    </tr>
-    <tr>
-        <td>Conexión a Internet</td>
-        <td>Requerida para acceder al sistema</td>
-    </tr>
-    <tr>
-        <td>Resolución de Pantalla</td>
-        <td>Mínimo 1024x768 px (optimizado para cualquier dispositivo)</td>
-    </tr>
-    <tr>
-        <td>JavaScript</td>
-        <td>Debe estar habilitado en el navegador</td>
-    </tr>
-</table>
-
-<div class="tip">
-    <strong>💡 Recomendación:</strong> Para una mejor experiencia, utilice Google Chrome o Microsoft Edge 
-    en su versión más reciente.
-</div>
-
-<!-- CAPÍTULO 2: PRIMEROS PASOS -->
-<h1>2. Primeros Pasos</h1>
-
-<h2>2.1 Acceso al Sistema</h2>
-<p>Para acceder al sistema Trinity, siga estos pasos:</p>
-
-<div class="step">
-    <span class="step-number">1</span>
-    <strong>Abra su navegador web</strong><br>
-    Inicie su navegador preferido (Google Chrome, Firefox, Safari o Edge)
-</div>
-
-<div class="step">
-    <span class="step-number">2</span>
-    <strong>Ingrese la URL del sistema</strong><br>
-    En la barra de direcciones, escriba la URL proporcionada por su administrador de sistemas
-</div>
-
-<div class="step">
-    <span class="step-number">3</span>
-    <strong>Visualice la página de inicio de sesión</strong><br>
-    Verá la elegante pantalla de login con el logo de Trinity en dorado y negro
-</div>
-
-<h2>2.2 Inicio de Sesión</h2>
-
-<div class="screenshot">
-    [Pantalla de Login - Fondo oscuro con logo Trinity dorado]
-</div>
-
-<p>La pantalla de inicio de sesión presenta:</p>
-<ul>
-    <li>Logo Trinity con efecto de brillo</li>
-    <li>Título "TRINITY" con subtítulo "ESTÉTICA & SPA"</li>
-    <li>Formulario de acceso con campos para correo electrónico y contraseña</li>
-    <li>Botón dorado "Iniciar Sesión"</li>
-</ul>
-
-<h3>Proceso de Login:</h3>
-
-<div class="step">
-    <span class="step-number">1</span>
-    <strong>Ingrese su correo electrónico</strong><br>
-    Escriba la dirección de correo electrónico proporcionada por su administrador
-</div>
-
-<div class="step">
-    <span class="step-number">2</span>
-    <strong>Ingrese su contraseña</strong><br>
-    Escriba su contraseña de acceso. Puede usar el ícono del ojo para mostrar/ocultar la contraseña
-</div>
-
-<div class="step">
-    <span class="step-number">3</span>
-    <strong>Haga clic en "Iniciar Sesión"</strong><br>
-    Presione el botón dorado para acceder al sistema
-</div>
-
-<div class="warning">
-    <strong>⚠️ Importante:</strong> Las credenciales son sensibles a mayúsculas y minúsculas. 
-    Asegúrese de escribirlas correctamente.
-</div>
-
-<h2>2.3 Usuarios del Sistema</h2>
-<p>El sistema Trinity cuenta con tres tipos de usuarios, cada uno con diferentes niveles de acceso:</p>
-
-<table>
-    <tr>
-        <th>Rol</th>
-        <th>Descripción</th>
-        <th>Permisos</th>
-    </tr>
-    <tr>
-        <td><strong>Administrador</strong></td>
-        <td>Acceso total al sistema</td>
-        <td>
-            • Gestión completa de citas<br>
-            • Administración de clientes<br>
-            • Control de servicios<br>
-            • Gestión de usuarios<br>
-            • Acceso a todos los reportes
-        </td>
-    </tr>
-    <tr>
-        <td><strong>Recepción</strong></td>
-        <td>Personal de atención al cliente</td>
-        <td>
-            • Crear y modificar citas<br>
-            • Gestionar clientes<br>
-            • Ver y actualizar servicios<br>
-            • Consultar reportes básicos
-        </td>
-    </tr>
-    <tr>
-        <td><strong>Estilista</strong></td>
-        <td>Profesionales de belleza</td>
-        <td>
-            • Ver sus propias citas<br>
-            • Actualizar estado de sus citas<br>
-            • Consultar información de clientes<br>
-            • Ver estadísticas personales
-        </td>
-    </tr>
-</table>
-
-<h2>2.4 Primera Sesión</h2>
-<p>Al iniciar sesión por primera vez, se recomienda:</p>
-<ol>
-    <li>Cambiar su contraseña predeterminada por una más segura</li>
-    <li>Explorar el dashboard para familiarizarse con la interfaz</li>
-    <li>Revisar las diferentes secciones del menú lateral</li>
-    <li>Contactar al administrador si tiene dudas sobre sus permisos</li>
-</ol>
-
-<div class="tip">
-    <strong>💡 Consejo de Seguridad:</strong> Use contraseñas seguras que combinen letras mayúsculas, 
-    minúsculas, números y símbolos. No comparta sus credenciales con nadie.
-</div>
-
-<!-- CAPÍTULO 3: DASHBOARD -->
-<h1>3. Dashboard Principal</h1>
-
-<h2>3.1 Descripción General</h2>
-<p>
-    El Dashboard es la página principal del sistema. Ofrece una vista panorámica de las métricas más 
-    importantes de su negocio, permitiéndole tomar decisiones informadas de un vistazo.
-</p>
-
-<div class="screenshot">
-    [Dashboard - Tarjetas de estadísticas y gráficos]
-</div>
-
-<h2>3.2 Componentes del Dashboard</h2>
-
-<h3>3.2.1 Saludo Personalizado</h3>
-<p>
-    En la parte superior verá un mensaje de bienvenida personalizado con su nombre de usuario, 
-    acompañado de un resumen del día.
-</p>
-
-<h3>3.2.2 Tarjetas de Estadísticas</h3>
-<p>El dashboard muestra cuatro tarjetas principales con métricas clave:</p>
-
-<table>
-    <tr>
-        <th>Métrica</th>
-        <th>Descripción</th>
-        <th>Color</th>
-    </tr>
-    <tr>
-        <td><strong>Total Clientes</strong></td>
-        <td>Número total de clientes registrados en el sistema</td>
-        <td>Azul</td>
-    </tr>
-    <tr>
-        <td><strong>Citas del Período</strong></td>
-        <td>Total de citas programadas en los últimos 30 días</td>
-        <td>Verde</td>
-    </tr>
-    <tr>
-        <td><strong>Servicios Activos</strong></td>
-        <td>Cantidad de servicios disponibles en el catálogo</td>
-        <td>Morado</td>
-    </tr>
-    <tr>
-        <td><strong>Ingresos (30 días)</strong></td>
-        <td>Total de ingresos generados en el último mes</td>
-        <td>Amarillo</td>
-    </tr>
-</table>
-
-<h3>3.2.3 Estado de Citas</h3>
-<p>Panel que muestra la distribución de citas por estado:</p>
-<ul>
-    <li><strong>Pendientes:</strong> Citas creadas pero no confirmadas (ícono amarillo)</li>
-    <li><strong>Confirmadas:</strong> Citas confirmadas por el cliente (ícono azul)</li>
-    <li><strong>Completadas:</strong> Citas realizadas exitosamente (ícono verde)</li>
-    <li><strong>Canceladas:</strong> Citas que fueron canceladas (ícono rojo)</li>
-</ul>
-
-<h3>3.2.4 Citas Recientes</h3>
-<p>
-    Lista de las 5 citas más recientes, mostrando:
-</p>
-<ul>
-    <li>Nombre del cliente</li>
-    <li>Fecha y hora de la cita</li>
-    <li>Estado actual (con badge de color)</li>
-</ul>
-
-<h3>3.2.5 Servicios Más Populares</h3>
-<p>
-    Ranking de los servicios más solicitados en el período, incluyendo:
-</p>
-<ul>
-    <li>Nombre del servicio</li>
-    <li>Precio</li>
-    <li>Cantidad de citas reservadas</li>
-</ul>
-
-<h3>3.2.6 Estilistas Destacados</h3>
-<p>
-    Clasificación de los estilistas con mejor desempeño, mostrando:
-</p>
-<ul>
-    <li>Nombre del estilista</li>
-    <li>Ingresos generados</li>
-    <li>Total de citas atendidas</li>
-</ul>
-
-<div class="note">
-    <strong>📊 Nota:</strong> El dashboard se actualiza automáticamente cada vez que ingresa al sistema. 
-    Todas las estadísticas se calculan en tiempo real basándose en los datos más recientes.
-</div>
-
-<h2>3.3 Navegación desde el Dashboard</h2>
-<p>Desde el dashboard puede acceder rápidamente a cualquier sección del sistema usando:</p>
-<ul>
-    <li><strong>Menú lateral (Sidebar):</strong> Ubicado a la izquierda de la pantalla</li>
-    <li><strong>Cabecera superior:</strong> Muestra su perfil y opciones de usuario</li>
-</ul>
-
-<!-- CAPÍTULO 4: GESTIÓN DE CITAS -->
-<h1>4. Gestión de Citas</h1>
-
-<h2>4.1 Descripción General</h2>
-<p>
-    El módulo de Gestión de Citas es el corazón del sistema Trinity. Permite programar, modificar, 
-    cancelar y monitorear todas las citas del salón con un sistema inteligente de prevención de conflictos.
-</p>
-
-<h2>4.2 Acceder al Módulo de Citas</h2>
-<div class="step">
-    <span class="step-number">1</span>
-    Haga clic en <strong>"Citas"</strong> en el menú lateral izquierdo
-</div>
-<div class="step">
-    <span class="step-number">2</span>
-    Visualizará la lista completa de citas con filtros disponibles
-</div>
-
-<h2>4.3 Crear una Nueva Cita</h2>
-<p><em>Disponible para: Administrador y Recepción</em></p>
-
-<div class="step">
-    <span class="step-number">1</span>
-    <strong>Abrir el formulario</strong><br>
-    Haga clic en el botón <code>+ Nueva Cita</code> ubicado en la esquina superior derecha
-</div>
-
-<div class="step">
-    <span class="step-number">2</span>
-    <strong>Seleccionar el cliente</strong><br>
-    En el campo "Cliente", elija de la lista desplegable el cliente para quien es la cita. 
-    El desplegable muestra el nombre y teléfono de cada cliente.
-</div>
-
-<div class="step">
-    <span class="step-number">3</span>
-    <strong>Asignar estilista</strong><br>
-    Seleccione el profesional que atenderá la cita en el campo "Estilista"
-</div>
-
-<div class="step">
-    <span class="step-number">4</span>
-    <strong>Definir fecha y hora</strong><br>
-    Use el selector de fecha y hora para establecer cuándo se realizará la cita. 
-    El sistema validará automáticamente que no haya conflictos de horario.
-</div>
-
-<div class="step">
-    <span class="step-number">5</span>
-    <strong>Seleccionar servicios</strong><br>
-    Marque los servicios que se realizarán en la cita. Puede seleccionar múltiples servicios. 
-    Cada servicio muestra su precio.
-</div>
-
-<div class="step">
-    <span class="step-number">6</span>
-    <strong>Establecer estado inicial</strong><br>
-    Elija el estado de la cita:
-    <ul>
-        <li><strong>Pendiente:</strong> La cita está creada pero no confirmada</li>
-        <li><strong>Confirmada:</strong> El cliente ya confirmó su asistencia</li>
-    </ul>
-</div>
-
-<div class="step">
-    <span class="step-number">7</span>
-    <strong>Agregar notas (opcional)</strong><br>
-    Si lo desea, puede añadir notas o comentarios especiales sobre la cita
-</div>
-
-<div class="step">
-    <span class="step-number">8</span>
-    <strong>Guardar la cita</strong><br>
-    Haga clic en el botón <code>Crear Cita</code> para guardar. El sistema mostrará un mensaje de confirmación.
-</div>
-
-<div class="warning">
-    <strong>⚠️ Prevención de Conflictos:</strong> El sistema NO permitirá crear citas si el estilista 
-    seleccionado ya tiene otra cita programada en el mismo horario. Recibirá un mensaje de error 
-    indicándole que debe elegir otro horario u otro estilista.
-</div>
-
-<h2>4.4 Visualizar Citas</h2>
-
-<h3>4.4.1 Lista de Citas</h3>
-<p>La vista principal muestra una tabla con todas las citas, incluyendo:</p>
-<table>
-    <tr>
-        <th>Columna</th>
-        <th>Información</th>
-    </tr>
-    <tr>
-        <td><strong>Cliente</strong></td>
-        <td>Nombre completo y teléfono del cliente</td>
-    </tr>
-    <tr>
-        <td><strong>Fecha y Hora</strong></td>
-        <td>Cuándo se realizará la cita (formato día/mes/año y hora:minuto)</td>
-    </tr>
-    <tr>
-        <td><strong>Estilista</strong></td>
-        <td>Profesional asignado a la cita</td>
-    </tr>
-    <tr>
-        <td><strong>Servicios</strong></td>
-        <td>Lista de servicios que se realizarán</td>
-    </tr>
-    <tr>
-        <td><strong>Estado</strong></td>
-        <td>Estado actual con badge de color</td>
-    </tr>
-    <tr>
-        <td><strong>Total</strong></td>
-        <td>Precio total de todos los servicios</td>
-    </tr>
-    <tr>
-        <td><strong>Acciones</strong></td>
-        <td>Botones para editar o cancelar la cita</td>
-    </tr>
-</table>
-
-<h3>4.4.2 Filtros de Búsqueda</h3>
-<p>Para encontrar citas específicas, utilice los filtros disponibles:</p>
-
-<ul>
-    <li><strong>Estado:</strong> Filtre por Pendiente, Confirmada, Completada o Cancelada</li>
-    <li><strong>Estilista:</strong> Vea solo las citas de un estilista específico (solo Admin y Recepción)</li>
-    <li><strong>Fecha Desde:</strong> Establezca la fecha inicial del rango de búsqueda</li>
-    <li><strong>Fecha Hasta:</strong> Establezca la fecha final del rango de búsqueda</li>
-</ul>
-
-<div class="tip">
-    <strong>💡 Consejo:</strong> Los estilistas solo ven sus propias citas automáticamente. 
-    No necesitan aplicar filtros adicionales.
-</div>
-
-<h2>4.5 Editar una Cita</h2>
-<p><em>Disponible para: Administrador y Recepción</em></p>
-
-<div class="step">
-    <span class="step-number">1</span>
-    Localice la cita que desea modificar en la lista
-</div>
-
-<div class="step">
-    <span class="step-number">2</span>
-    Haga clic en el botón <code>Editar</code>
-</div>
-
-<div class="step">
-    <span class="step-number">3</span>
-    Se abrirá el formulario con los datos actuales de la cita
-</div>
-
-<div class="step">
-    <span class="step-number">4</span>
-    Modifique los campos que necesite cambiar
-</div>
-
-<div class="step">
-    <span class="step-number">5</span>
-    Haga clic en <code>Actualizar Cita</code> para guardar los cambios
-</div>
-
-<h3>Cambios Comunes:</h3>
-<ul>
-    <li><strong>Reprogramar:</strong> Cambie la fecha y hora de la cita</li>
-    <li><strong>Cambiar estado:</strong> Actualice de "Pendiente" a "Confirmada" o a "Completada"</li>
-    <li><strong>Agregar/quitar servicios:</strong> Modifique los servicios seleccionados</li>
-    <li><strong>Cambiar estilista:</strong> Reasigne la cita a otro profesional</li>
-</ul>
-
-<h2>4.6 Cancelar una Cita</h2>
-<p><em>Disponible para: Administrador y Recepción</em></p>
-
-<div class="step">
-    <span class="step-number">1</span>
-    Localice la cita que desea cancelar
-</div>
-
-<div class="step">
-    <span class="step-number">2</span>
-    Haga clic en el botón <code>Cancelar</code> (rojo)
-</div>
-
-<div class="step">
-    <span class="step-number">3</span>
-    Confirme la acción en el cuadro de diálogo que aparece
-</div>
-
-<div class="step">
-    <span class="step-number">4</span>
-    La cita será marcada como cancelada y se mostrará con el badge rojo
-</div>
-
-<div class="note">
-    <strong>📝 Nota:</strong> Las citas canceladas no se eliminan del sistema. Permanecen en el historial 
-    con el estado "Cancelada" para fines de auditoría y estadísticas.
-</div>
-
-<h2>4.7 Estados de Cita</h2>
-<p>Cada cita puede estar en uno de los siguientes estados:</p>
-
-<table>
-    <tr>
-        <th>Estado</th>
-        <th>Color</th>
-        <th>Descripción</th>
-        <th>Cuándo usar</th>
-    </tr>
-    <tr>
-        <td><strong>Pendiente</strong></td>
-        <td>Amarillo</td>
-        <td>Cita creada pero no confirmada</td>
-        <td>Al crear una nueva cita</td>
-    </tr>
-    <tr>
-        <td><strong>Confirmada</strong></td>
-        <td>Azul</td>
-        <td>Cliente confirmó su asistencia</td>
-        <td>Después de contactar al cliente</td>
-    </tr>
-    <tr>
-        <td><strong>Completada</strong></td>
-        <td>Verde</td>
-        <td>Cita realizada exitosamente</td>
-        <td>Cuando el servicio se ha completado</td>
-    </tr>
-    <tr>
-        <td><strong>Cancelada</strong></td>
-        <td>Rojo</td>
-        <td>Cita cancelada por cualquier motivo</td>
-        <td>Si el cliente no puede asistir o hay otro inconveniente</td>
-    </tr>
-</table>
-
-<h2>4.8 Mejores Prácticas</h2>
-<ul>
-    <li>✅ Confirme las citas con los clientes 24 horas antes y actualice el estado a "Confirmada"</li>
-    <li>✅ Marque las citas como "Completada" inmediatamente después de realizar el servicio</li>
-    <li>✅ Agregue notas relevantes sobre preferencias o requerimientos especiales del cliente</li>
-    <li>✅ Revise el calendario diariamente para preparar los servicios del día</li>
-    <li>✅ Mantenga actualizados los teléfonos de contacto de los clientes</li>
-    <li>⚠️ Evite programar citas muy cercanas sin tiempo de transición</li>
-    <li>⚠️ No olvide verificar la disponibilidad antes de confirmar con el cliente</li>
-</ul>
-
-<!-- CAPÍTULO 5: GESTIÓN DE CLIENTES -->
-<h1>5. Gestión de Clientes</h1>
-
-<h2>5.1 Descripción General</h2>
-<p>
-    El módulo de Gestión de Clientes permite mantener un registro completo de todos los clientes del salón, 
-    incluyendo sus datos de contacto, historial de citas y preferencias.
-</p>
-
-<p><em>Disponible para: Administrador y Recepción</em></p>
-
-<h2>5.2 Acceder al Módulo de Clientes</h2>
-<div class="step">
-    <span class="step-number">1</span>
-    Haga clic en <strong>"Clientes"</strong> en el menú lateral izquierdo
-</div>
-
-<h2>5.3 Información de Cliente</h2>
-<p>Para cada cliente, el sistema almacena:</p>
-
-<table>
-    <tr>
-        <th>Campo</th>
-        <th>Descripción</th>
-        <th>Obligatorio</th>
-    </tr>
-    <tr>
-        <td><strong>Nombre completo</strong></td>
-        <td>Nombre y apellidos del cliente</td>
-        <td>Sí</td>
-    </tr>
-    <tr>
-        <td><strong>Teléfono</strong></td>
-        <td>Número de contacto principal</td>
-        <td>Sí</td>
-    </tr>
-    <tr>
-        <td><strong>Email</strong></td>
-        <td>Correo electrónico del cliente</td>
-        <td>Opcional</td>
-    </tr>
-    <tr>
-        <td><strong>Fecha de nacimiento</strong></td>
-        <td>Para felicitaciones y promociones especiales</td>
-        <td>Opcional</td>
-    </tr>
-    <tr>
-        <td><strong>Notas</strong></td>
-        <td>Observaciones, preferencias, alergias, etc.</td>
-        <td>Opcional</td>
-    </tr>
-</table>
-
-<h2>5.4 Funcionalidades</h2>
-
-<h3>Registrar Nuevo Cliente</h3>
-<ol>
-    <li>Clic en el botón <code>+ Nuevo Cliente</code></li>
-    <li>Complete el formulario con los datos del cliente</li>
-    <li>Guarde el registro</li>
-</ol>
-
-<h3>Buscar Clientes</h3>
-<ul>
-    <li>Use el campo de búsqueda para encontrar clientes por nombre o teléfono</li>
-    <li>Navegue por la lista con paginación</li>
-</ul>
-
-<h3>Editar Información</h3>
-<ul>
-    <li>Seleccione el cliente de la lista</li>
-    <li>Haga clic en <code>Editar</code></li>
-    <li>Actualice la información necesaria</li>
-    <li>Guarde los cambios</li>
-</ul>
-
-<h3>Ver Historial</h3>
-<ul>
-    <li>Acceda al perfil del cliente para ver su historial completo de citas</li>
-    <li>Consulte servicios anteriores y preferencias</li>
-</ul>
-
-<div class="tip">
-    <strong>💡 Consejo:</strong> Mantenga actualizada la información de contacto de los clientes para 
-    poder enviar recordatorios y confirmaciones de citas.
-</div>
-
-<h2>5.5 Mejores Prácticas</h2>
-<ul>
-    <li>✅ Verifique que no exista un cliente duplicado antes de crear uno nuevo</li>
-    <li>✅ Registre las preferencias y observaciones importantes del cliente</li>
-    <li>✅ Actualice la información cuando el cliente lo solicite</li>
-    <li>✅ Documente alergias o condiciones especiales en el campo de notas</li>
-    <li>✅ Mantenga la confidencialidad de los datos personales</li>
-</ul>
-
-<div class="note">
-    <strong>📋 Estado del Módulo:</strong> Este módulo está implementado con funcionalidad básica. 
-    Las características avanzadas de historial y estadísticas por cliente están en desarrollo.
-</div>
-
-<!-- CAPÍTULO 6: GESTIÓN DE SERVICIOS -->
-<h1>6. Gestión de Servicios</h1>
-
-<h2>6.1 Descripción General</h2>
-<p>
-    El módulo de Servicios permite administrar el catálogo completo de tratamientos y servicios que 
-    ofrece el salón, incluyendo precios, duración y categorías.
-</p>
-
-<p><em>Disponible para: Administrador y Recepción</em></p>
-
-<h2>6.2 Acceder al Módulo de Servicios</h2>
-<div class="step">
-    <span class="step-number">1</span>
-    Haga clic en <strong>"Servicios"</strong> en el menú lateral izquierdo
-</div>
-
-<h2>6.3 Información de Servicio</h2>
-<p>Cada servicio en el catálogo contiene:</p>
-
-<table>
-    <tr>
-        <th>Campo</th>
-        <th>Descripción</th>
-    </tr>
-    <tr>
-        <td><strong>Nombre</strong></td>
-        <td>Nombre del servicio (ej: Corte de Cabello, Manicure, Tinte)</td>
-    </tr>
-    <tr>
-        <td><strong>Descripción</strong></td>
-        <td>Detalles sobre qué incluye el servicio</td>
-    </tr>
-    <tr>
-        <td><strong>Precio</strong></td>
-        <td>Costo del servicio en la moneda local</td>
-    </tr>
-    <tr>
-        <td><strong>Duración</strong></td>
-        <td>Tiempo estimado en minutos para realizar el servicio</td>
-    </tr>
-    <tr>
-        <td><strong>Categoría</strong></td>
-        <td>Clasificación del servicio (Cabello, Uñas, Facial, Corporal, etc.)</td>
-    </tr>
-    <tr>
-        <td><strong>Estado</strong></td>
-        <td>Activo o Inactivo</td>
-    </tr>
-</table>
-
-<h2>6.4 Categorías de Servicios</h2>
-<p>Los servicios se organizan en categorías para facilitar su gestión:</p>
-<ul>
-    <li><strong>Cabello:</strong> Cortes, peinados, tratamientos capilares, tintes</li>
-    <li><strong>Uñas:</strong> Manicure, pedicure, decoración de uñas</li>
-    <li><strong>Facial:</strong> Limpiezas faciales, mascarillas, tratamientos anti-edad</li>
-    <li><strong>Corporal:</strong> Masajes, exfoliaciones, tratamientos reductores</li>
-    <li><strong>Maquillaje:</strong> Maquillaje social, de novia, profesional</li>
-    <li><strong>Depilación:</strong> Depilación láser, con cera, etc.</li>
-</ul>
-
-<h2>6.5 Funcionalidades</h2>
-
-<h3>Crear Nuevo Servicio</h3>
-<ol>
-    <li>Clic en <code>+ Nuevo Servicio</code></li>
-    <li>Complete todos los campos del formulario</li>
-    <li>Establezca el precio y duración</li>
-    <li>Seleccione la categoría apropiada</li>
-    <li>Guarde el servicio</li>
-</ol>
-
-<h3>Editar Servicio</h3>
-<ol>
-    <li>Localice el servicio en la lista</li>
-    <li>Clic en <code>Editar</code></li>
-    <li>Modifique los campos necesarios</li>
-    <li>Guarde los cambios</li>
-</ol>
-
-<h3>Desactivar Servicio</h3>
-<p>Si un servicio ya no se ofrece temporalmente:</p>
-<ol>
-    <li>Edite el servicio</li>
-    <li>Cambie el estado a "Inactivo"</li>
-    <li>El servicio dejará de aparecer al crear citas</li>
-</ol>
-
-<div class="warning">
-    <strong>⚠️ Importante:</strong> No elimine servicios que tienen citas históricas asociadas. 
-    Es mejor marcarlos como inactivos para mantener la integridad del historial.
-</div>
-
-<h2>6.6 Gestión de Precios</h2>
-<ul>
-    <li>Actualice los precios regularmente según sea necesario</li>
-    <li>Los cambios de precio NO afectan citas ya creadas</li>
-    <li>Las nuevas citas usarán el precio actualizado automáticamente</li>
-</ul>
-
-<h2>6.7 Mejores Prácticas</h2>
-<ul>
-    <li>✅ Use nombres claros y descriptivos para los servicios</li>
-    <li>✅ Mantenga los precios actualizados</li>
-    <li>✅ Establezca duraciones realistas considerando tiempo de preparación y limpieza</li>
-    <li>✅ Agrupe servicios similares en la misma categoría</li>
-    <li>✅ Revise periódicamente los servicios más solicitados en el dashboard</li>
-    <li>✅ Documente claramente qué incluye cada servicio</li>
-</ul>
-
-<div class="note">
-    <strong>📋 Estado del Módulo:</strong> Este módulo está implementado con funcionalidad básica. 
-    La interfaz completa de gestión está en desarrollo.
-</div>
-
-<!-- CAPÍTULO 7: GESTIÓN DE USUARIOS -->
-<h1>7. Gestión de Usuarios</h1>
-
-<h2>7.1 Descripción General</h2>
-<p>
-    El módulo de Gestión de Usuarios permite al administrador crear, modificar y controlar las cuentas 
-    de acceso al sistema para el personal del salón.
-</p>
-
-<p><em>Disponible exclusivamente para: Administrador</em></p>
-
-<h2>7.2 Acceder al Módulo de Usuarios</h2>
-<div class="step">
-    <span class="step-number">1</span>
-    Haga clic en <strong>"Usuarios"</strong> en el menú lateral izquierdo
-</div>
-
-<div class="note">
-    <strong>🔒 Restricción:</strong> Este módulo solo es visible para usuarios con rol de Administrador.
-</div>
-
-<h2>7.3 Tipos de Usuario</h2>
-
-<table>
-    <tr>
-        <th>Rol</th>
-        <th>Nivel de Acceso</th>
-        <th>Casos de Uso</th>
-    </tr>
-    <tr>
-        <td><strong>admin</strong></td>
-        <td>Completo</td>
-        <td>Dueño del salón, gerente general</td>
-    </tr>
-    <tr>
-        <td><strong>recepcion</strong></td>
-        <td>Operativo</td>
-        <td>Recepcionista, coordinador de citas</td>
-    </tr>
-    <tr>
-        <td><strong>estilista</strong></td>
-        <td>Limitado</td>
-        <td>Estilistas, técnicos de belleza, masajistas</td>
-    </tr>
-</table>
-
-<h2>7.4 Crear Nuevo Usuario</h2>
-
-<div class="step">
-    <span class="step-number">1</span>
-    <strong>Abrir formulario</strong><br>
-    Clic en <code>+ Nuevo Usuario</code>
-</div>
-
-<div class="step">
-    <span class="step-number">2</span>
-    <strong>Información básica</strong><br>
-    Complete los campos:
-    <ul>
-        <li><strong>Email:</strong> Dirección de correo que se usará para iniciar sesión</li>
-        <li><strong>Contraseña:</strong> Contraseña inicial (el usuario deberá cambiarla)</li>
-        <li><strong>Nombre completo:</strong> Nombre del empleado</li>
-    </ul>
-</div>
-
-<div class="step">
-    <span class="step-number">3</span>
-    <strong>Asignar rol</strong><br>
-    Seleccione el rol apropiado según las funciones del empleado
-</div>
-
-<div class="step">
-    <span class="step-number">4</span>
-    <strong>Información adicional</strong><br>
-    Opcionalmente agregue:
-    <ul>
-        <li>Teléfono de contacto</li>
-        <li>Especialidades (para estilistas)</li>
-    </ul>
-</div>
-
-<div class="step">
-    <span class="step-number">5</span>
-    <strong>Guardar</strong><br>
-    Clic en <code>Crear Usuario</code>
-</div>
-
-<div class="tip">
-    <strong>💡 Primera Contraseña:</strong> Proporcione al nuevo usuario su contraseña inicial de forma 
-    segura y pídele que la cambie en su primer inicio de sesión.
-</div>
-
-<h2>7.5 Editar Usuario</h2>
-<p>Para modificar la información de un usuario existente:</p>
-<ol>
-    <li>Localice el usuario en la lista</li>
-    <li>Clic en <code>Editar</code></li>
-    <li>Modifique los campos necesarios</li>
-    <li>Puede cambiar: nombre, teléfono, rol, estado</li>
-    <li>Para cambiar contraseña, use el campo correspondiente</li>
-    <li>Guarde los cambios</li>
-</ol>
-
-<h2>7.6 Desactivar Usuario</h2>
-<p>Cuando un empleado deja de trabajar en el salón:</p>
-<ol>
-    <li>NO elimine el usuario (para mantener historial)</li>
-    <li>Edite el usuario</li>
-    <li>Cambie el estado a "Inactivo"</li>
-    <li>El usuario no podrá iniciar sesión</li>
-    <li>Las citas históricas mantendrán el nombre del estilista</li>
-</ol>
-
-<h2>7.7 Seguridad de Cuentas</h2>
-
-<h3>Políticas Recomendadas:</h3>
-<ul>
-    <li>✅ Use direcciones de email únicas para cada usuario</li>
-    <li>✅ Establezca contraseñas seguras (mínimo 8 caracteres)</li>
-    <li>✅ Solicite cambio de contraseña en el primer inicio de sesión</li>
-    <li>✅ Revise periódicamente los usuarios activos</li>
-    <li>✅ Desactive inmediatamente cuentas de personal que ya no labora</li>
-    <li>⚠️ No comparta credenciales entre múltiples personas</li>
-    <li>⚠️ No use contraseñas obvias o fáciles de adivinar</li>
-</ul>
-
-<h2>7.8 Permisos por Rol</h2>
-
-<h3>Administrador puede:</h3>
-<ul>
-    <li>✓ Acceder a todos los módulos</li>
-    <li>✓ Crear, editar y eliminar citas</li>
-    <li>✓ Gestionar clientes</li>
-    <li>✓ Administrar servicios</li>
-    <li>✓ Crear y gestionar usuarios</li>
-    <li>✓ Ver todos los reportes</li>
-    <li>✓ Configurar el sistema</li>
-</ul>
-
-<h3>Recepción puede:</h3>
-<ul>
-    <li>✓ Crear, editar y cancelar citas</li>
-    <li>✓ Gestionar clientes</li>
-    <li>✓ Ver catálogo de servicios</li>
-    <li>✓ Ver reportes básicos</li>
-    <li>✗ NO puede gestionar usuarios</li>
-    <li>✗ NO puede cambiar configuraciones</li>
-</ul>
-
-<h3>Estilista puede:</h3>
-<ul>
-    <li>✓ Ver sus propias citas</li>
-    <li>✓ Actualizar estado de sus citas</li>
-    <li>✓ Ver información de clientes de sus citas</li>
-    <li>✓ Ver sus estadísticas personales</li>
-    <li>✗ NO puede ver citas de otros estilistas</li>
-    <li>✗ NO puede crear o eliminar citas</li>
-    <li>✗ NO puede gestionar clientes</li>
-</ul>
-
-<div class="note">
-    <strong>📋 Estado del Módulo:</strong> Este módulo está implementado con funcionalidad básica. 
-    La interfaz completa de gestión de usuarios está en desarrollo.
-</div>
-
-<!-- CAPÍTULO 8: REPORTES -->
-<h1>8. Reportes y Estadísticas</h1>
-
-<h2>8.1 Descripción General</h2>
-<p>
-    El módulo de Reportes proporciona análisis detallados y estadísticas sobre el desempeño del salón, 
-    permitiendo tomar decisiones basadas en datos.
-</p>
-
-<p><em>Disponible para: Administrador (acceso completo) y Recepción (acceso limitado)</em></p>
-
-<h2>8.2 Acceder al Módulo de Reportes</h2>
-<div class="step">
-    <span class="step-number">1</span>
-    Haga clic en <strong>"Reportes"</strong> en el menú lateral izquierdo
-</div>
-
-<h2>8.3 Tipos de Reportes Disponibles</h2>
-
-<h3>8.3.1 Reporte de Ingresos</h3>
-<p><strong>Información que proporciona:</strong></p>
-<ul>
-    <li>Ingresos totales por período seleccionado</li>
-    <li>Desglose de ingresos por servicio</li>
-    <li>Comparación con períodos anteriores</li>
-    <li>Tendencias de facturación</li>
-</ul>
-
-<h3>8.3.2 Reporte de Citas</h3>
-<p><strong>Análisis incluido:</strong></p>
-<ul>
-    <li>Total de citas por estado</li>
-    <li>Tasa de cancelación</li>
-    <li>Horarios más populares</li>
-    <li>Días de mayor demanda</li>
-</ul>
-
-<h3>8.3.3 Reporte de Clientes</h3>
-<p><strong>Métricas de clientes:</strong></p>
-<ul>
-    <li>Clientes nuevos vs. recurrentes</li>
-    <li>Clientes más frecuentes</li>
-    <li>Clientes inactivos</li>
-    <li>Promedio de visitas por cliente</li>
-</ul>
-
-<h3>8.3.4 Reporte de Desempeño por Estilista</h3>
-<p><strong>Indicadores por profesional:</strong></p>
-<ul>
-    <li>Total de citas atendidas</li>
-    <li>Ingresos generados</li>
-    <li>Servicios más realizados</li>
-    <li>Calificación promedio (si aplica)</li>
-</ul>
-
-<h2>8.4 Filtros de Reportes</h2>
-<p>Todos los reportes pueden filtrarse por:</p>
-<ul>
-    <li><strong>Período:</strong> Día, semana, mes, trimestre, año o rango personalizado</li>
-    <li><strong>Estilista:</strong> Ver datos de un profesional específico</li>
-    <li><strong>Servicio:</strong> Analizar un servicio en particular</li>
-    <li><strong>Estado:</strong> Filtrar por estado de citas</li>
-</ul>
-
-<h2>8.5 Exportar Reportes</h2>
-<p>Los reportes pueden exportarse en diferentes formatos:</p>
-<ul>
-    <li><strong>PDF:</strong> Para imprimir o archivar</li>
-    <li><strong>Excel:</strong> Para análisis adicional en hojas de cálculo</li>
-    <li><strong>CSV:</strong> Para importar en otros sistemas</li>
-</ul>
-
-<h2>8.6 Dashboard de Reportes</h2>
-<p>El dashboard de reportes muestra resúmenes ejecutivos con:</p>
-<ul>
-    <li>Gráficos de tendencias de ingresos</li>
-    <li>Distribución de citas por estado (gráfico circular)</li>
-    <li>Servicios más populares (gráfico de barras)</li>
-    <li>Rendimiento por estilista (ranking)</li>
-</ul>
-
-<h2>8.7 Uso de Reportes para Toma de Decisiones</h2>
-
-<h3>Ejemplos Prácticos:</h3>
-
-<table>
-    <tr>
-        <th>Situación</th>
-        <th>Reporte a Consultar</th>
-        <th>Acción Sugerida</th>
-    </tr>
-    <tr>
-        <td>Bajos ingresos en ciertos días</td>
-        <td>Reporte de Citas por Día</td>
-        <td>Crear promociones para esos días</td>
-    </tr>
-    <tr>
-        <td>Alta tasa de cancelaciones</td>
-        <td>Reporte de Citas</td>
-        <td>Implementar confirmaciones previas</td>
-    </tr>
-    <tr>
-        <td>Servicios poco solicitados</td>
-        <td>Reporte de Servicios</td>
-        <td>Revisar precios o promocionar más</td>
-    </tr>
-    <tr>
-        <td>Clientes inactivos</td>
-        <td>Reporte de Clientes</td>
-        <td>Campaña de recuperación de clientes</td>
-    </tr>
-</table>
-
-<h2>8.8 Mejores Prácticas</h2>
-<ul>
-    <li>✅ Revise los reportes semanalmente para detectar tendencias</li>
-    <li>✅ Compare períodos similares (mismo mes de años diferentes)</li>
-    <li>✅ Use los datos para planificar inventario y personal</li>
-    <li>✅ Analice el desempeño después de promociones</li>
-    <li>✅ Identifique horarios pico para optimizar la agenda</li>
-    <li>✅ Reconozca y recompense a los estilistas con mejor desempeño</li>
-</ul>
-
-<div class="note">
-    <strong>📋 Estado del Módulo:</strong> Los reportes básicos están disponibles en el Dashboard. 
-    El módulo completo de reportes avanzados está en desarrollo.
-</div>
-
-<!-- CAPÍTULO 9: ROLES Y PERMISOS -->
-<h1>9. Roles y Permisos</h1>
-
-<h2>9.1 Sistema de Control de Acceso</h2>
-<p>
-    Trinity implementa un sistema de Control de Acceso Basado en Roles (RBAC - Role-Based Access Control) 
-    que garantiza que cada usuario solo pueda acceder a las funcionalidades apropiadas para su puesto.
-</p>
-
-<h2>9.2 Matriz de Permisos</h2>
-
-<table>
-    <tr>
-        <th>Funcionalidad</th>
-        <th>Administrador</th>
-        <th>Recepción</th>
-        <th>Estilista</th>
-    </tr>
-    <tr>
-        <td colspan="4" style="background: #C4A962; color: white; font-weight: bold;">DASHBOARD</td>
-    </tr>
-    <tr>
-        <td>Ver dashboard completo</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Limitado</td>
-    </tr>
-    <tr>
-        <td>Ver estadísticas generales</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Ver estadísticas personales</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-    </tr>
-    <tr>
-        <td colspan="4" style="background: #C4A962; color: white; font-weight: bold;">CITAS</td>
-    </tr>
-    <tr>
-        <td>Ver todas las citas</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Ver solo sus citas</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-    </tr>
-    <tr>
-        <td>Crear citas</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Editar citas</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Cancelar citas</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Cambiar estado de sus citas</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-    </tr>
-    <tr>
-        <td colspan="4" style="background: #C4A962; color: white; font-weight: bold;">CLIENTES</td>
-    </tr>
-    <tr>
-        <td>Ver clientes</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Limitado</td>
-    </tr>
-    <tr>
-        <td>Crear clientes</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Editar clientes</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Eliminar clientes</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td colspan="4" style="background: #C4A962; color: white; font-weight: bold;">SERVICIOS</td>
-    </tr>
-    <tr>
-        <td>Ver servicios</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-    </tr>
-    <tr>
-        <td>Crear servicios</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Editar servicios</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Eliminar servicios</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td colspan="4" style="background: #C4A962; color: white; font-weight: bold;">USUARIOS</td>
-    </tr>
-    <tr>
-        <td>Ver usuarios</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Crear usuarios</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Editar usuarios</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Eliminar usuarios</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td colspan="4" style="background: #C4A962; color: white; font-weight: bold;">REPORTES</td>
-    </tr>
-    <tr>
-        <td>Ver reportes completos</td>
-        <td>✓ Sí</td>
-        <td>✓ Limitado</td>
-        <td>✗ No</td>
-    </tr>
-    <tr>
-        <td>Ver reportes personales</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-    </tr>
-    <tr>
-        <td>Exportar reportes</td>
-        <td>✓ Sí</td>
-        <td>✓ Sí</td>
-        <td>✗ No</td>
-    </tr>
-</table>
-
-<h2>9.3 Visibilidad del Menú</h2>
-<p>El menú lateral se adapta automáticamente según el rol del usuario:</p>
-
-<h3>Administrador ve:</h3>
-<ul>
-    <li>Dashboard</li>
-    <li>Citas</li>
-    <li>Clientes</li>
-    <li>Servicios</li>
-    <li>Usuarios</li>
-    <li>Reportes</li>
-</ul>
-
-<h3>Recepción ve:</h3>
-<ul>
-    <li>Dashboard</li>
-    <li>Citas</li>
-    <li>Clientes</li>
-    <li>Servicios</li>
-    <li>Reportes (limitado)</li>
-</ul>
-
-<h3>Estilista ve:</h3>
-<ul>
-    <li>Dashboard (personalizado)</li>
-    <li>Mis Citas</li>
-</ul>
-
-<h2>9.4 Seguridad y Auditoría</h2>
-<p>El sistema implementa las siguientes medidas de seguridad:</p>
-<ul>
-    <li>🔒 Autenticación con tokens JWT</li>
-    <li>🔒 Tokens con expiración de 8 horas</li>
-    <li>🔒 Contraseñas encriptadas con bcrypt</li>
-    <li>🔒 Validación de permisos en cada solicitud</li>
-    <li>🔒 Protección contra ataques CSRF y XSS</li>
-    <li>🔒 Cierre de sesión automático por inactividad</li>
-</ul>
-
-<div class="warning">
-    <strong>⚠️ Importante:</strong> Si un usuario intenta acceder a una funcionalidad para la que no 
-    tiene permisos, el sistema mostrará un mensaje de "Acceso Denegado" y registrará el intento.
-</div>
-
-<!-- CAPÍTULO 10: PREGUNTAS FRECUENTES -->
-<h1>10. Preguntas Frecuentes (FAQ)</h1>
-
-<h2>10.1 Sobre el Acceso</h2>
-
-<h3>¿Qué hago si olvidé mi contraseña?</h3>
-<p>
-    Contacte a su administrador del sistema para que restablezca su contraseña. Por seguridad, 
-    el sistema no envía contraseñas por correo electrónico.
-</p>
-
-<h3>¿Por qué no puedo iniciar sesión?</h3>
-<p>Posibles razones:</p>
-<ul>
-    <li>Email o contraseña incorrectos (verifique mayúsculas/minúsculas)</li>
-    <li>Su cuenta puede estar desactivada</li>
-    <li>El servidor puede estar temporalmente fuera de servicio</li>
-    <li>Problema de conexión a internet</li>
-</ul>
-
-<h3>¿Cuánto tiempo dura mi sesión?</h3>
-<p>
-    Su sesión permanece activa por 8 horas desde el último inicio de sesión. Después de ese tiempo, 
-    deberá iniciar sesión nuevamente.
-</p>
-
-<h2>10.2 Sobre las Citas</h2>
-
-<h3>¿Por qué no puedo crear una cita en cierto horario?</h3>
-<p>
-    El sistema previene automáticamente conflictos de horario. Si no puede crear una cita, es porque 
-    el estilista seleccionado ya tiene otra cita en ese horario. Elija otro horario u otro estilista.
-</p>
-
-<h3>¿Puedo crear varias citas para el mismo cliente el mismo día?</h3>
-<p>
-    Sí, puede crear múltiples citas para el mismo cliente en diferentes horarios, siempre que no 
-    haya conflictos con el estilista.
-</p>
-
-<h3>¿Qué pasa si cancelo una cita por error?</h3>
-<p>
-    Contacte inmediatamente a su administrador. Las citas canceladas se marcan en el sistema pero 
-    no se eliminan, por lo que pueden recuperarse si es necesario.
-</p>
-
-<h3>¿Cómo calculo el precio total de una cita?</h3>
-<p>
-    El sistema calcula automáticamente el precio total sumando todos los servicios seleccionados 
-    para la cita.
-</p>
-
-<h2>10.3 Sobre los Clientes</h2>
-
-<h3>¿Qué hago si un cliente ya está registrado con otro nombre?</h3>
-<p>
-    Puede actualizar la información del cliente editando su perfil. No cree un cliente duplicado.
-</p>
-
-<h3>¿Es obligatorio el email del cliente?</h3>
-<p>
-    No, el email es opcional. Los campos obligatorios son nombre completo y teléfono.
-</p>
-
-<h2>10.4 Sobre los Servicios</h2>
-
-<h3>¿Puedo cambiar el precio de un servicio?</h3>
-<p>
-    Sí, pero el cambio solo afectará a las nuevas citas. Las citas ya creadas mantendrán el precio 
-    original del momento en que se crearon.
-</p>
-
-<h3>¿Qué significa servicio "Inactivo"?</h3>
-<p>
-    Un servicio inactivo ya no aparece al crear nuevas citas, pero se mantiene en el sistema para 
-    el historial de citas pasadas.
-</p>
-
-<h2>10.5 Problemas Técnicos</h2>
-
-<h3>¿Por qué el sistema está lento?</h3>
-<p>Posibles causas:</p>
-<ul>
-    <li>Conexión a internet lenta</li>
-    <li>Muchos usuarios conectados simultáneamente</li>
-    <li>Mantenimiento del servidor</li>
-    <li>Cache del navegador llena (limpie el cache)</li>
-</ul>
-
-<h3>¿El sistema funciona en móviles?</h3>
-<p>
-    Sí, Trinity está optimizado para funcionar en cualquier dispositivo: computadoras, tablets y móviles.
-</p>
-
-<h3>¿Qué navegadores son compatibles?</h3>
-<p>
-    Trinity funciona en todos los navegadores modernos: Google Chrome, Firefox, Safari y Microsoft Edge 
-    (se recomienda usar siempre la versión más reciente).
-</p>
-
-<!-- CAPÍTULO 11: SOLUCIÓN DE PROBLEMAS -->
-<h1>11. Solución de Problemas</h1>
-
-<h2>11.1 Problemas Comunes y Soluciones</h2>
-
-<h3>Problema: "No se puede conectar con el servidor"</h3>
-<div class="step">
-    <strong>Solución:</strong>
-    <ol>
-        <li>Verifique su conexión a internet</li>
-        <li>Intente recargar la página (F5)</li>
-        <li>Limpie el cache del navegador</li>
-        <li>Si el problema persiste, contacte al administrador</li>
-    </ol>
-</div>
-
-<h3>Problema: "La página no carga correctamente"</h3>
-<div class="step">
-    <strong>Solución:</strong>
-    <ol>
-        <li>Actualice su navegador a la versión más reciente</li>
-        <li>Limpie el cache y las cookies</li>
-        <li>Intente con otro navegador</li>
-        <li>Desactive extensiones del navegador que puedan interferir</li>
-    </ol>
-</div>
-
-<h3>Problema: "Error al guardar datos"</h3>
-<div class="step">
-    <strong>Solución:</strong>
-    <ol>
-        <li>Verifique que completó todos los campos obligatorios</li>
-        <li>Revise que los datos sean válidos (emails, teléfonos, fechas)</li>
-        <li>Intente guardar nuevamente</li>
-        <li>Si el error persiste, tome nota del mensaje y contacte soporte</li>
-    </ol>
-</div>
-
-<h3>Problema: "No veo todas las opciones del menú"</h3>
-<div class="step">
-    <strong>Solución:</strong>
-    <p>
-        Esto es normal. El menú muestra solo las opciones disponibles para su rol. Si cree que 
-        debería tener más accesos, consulte con su administrador.
-    </p>
-</div>
-
-<h3>Problema: "Los datos no se actualizan"</h3>
-<div class="step">
-    <strong>Solución:</strong>
-    <ol>
-        <li>Recargue la página</li>
-        <li>Cierre sesión y vuelva a iniciar</li>
-        <li>Limpie el cache del navegador</li>
-    </ol>
-</div>
-
-<h2>11.2 Mensajes de Error Comunes</h2>
-
-<table>
-    <tr>
-        <th>Mensaje de Error</th>
-        <th>Significado</th>
-        <th>Solución</th>
-    </tr>
-    <tr>
-        <td>"Token expirado"</td>
-        <td>Su sesión ha caducado</td>
-        <td>Inicie sesión nuevamente</td>
-    </tr>
-    <tr>
-        <td>"Credenciales inválidas"</td>
-        <td>Email o contraseña incorrectos</td>
-        <td>Verifique sus datos de acceso</td>
-    </tr>
-    <tr>
-        <td>"Acceso denegado"</td>
-        <td>No tiene permisos para esta acción</td>
-        <td>Consulte con su administrador</td>
-    </tr>
-    <tr>
-        <td>"Conflicto de horario"</td>
-        <td>Ya existe una cita en ese horario</td>
-        <td>Elija otro horario o estilista</td>
-    </tr>
-    <tr>
-        <td>"Campo requerido"</td>
-        <td>Falta completar un campo obligatorio</td>
-        <td>Complete todos los campos marcados con *</td>
-    </tr>
-</table>
-
-<h2>11.3 Limpiar Cache del Navegador</h2>
-
-<h3>Google Chrome:</h3>
-<ol>
-    <li>Presione <code>Ctrl + Shift + Delete</code> (Windows) o <code>Cmd + Shift + Delete</code> (Mac)</li>
-    <li>Seleccione "Todo el tiempo" en el rango de tiempo</li>
-    <li>Marque "Imágenes y archivos almacenados en caché"</li>
-    <li>Haga clic en "Borrar datos"</li>
-</ol>
-
-<h3>Firefox:</h3>
-<ol>
-    <li>Presione <code>Ctrl + Shift + Delete</code></li>
-    <li>Seleccione "Todo" en el intervalo de tiempo</li>
-    <li>Marque "Caché"</li>
-    <li>Haga clic en "Limpiar ahora"</li>
-</ol>
-
-<h2>11.4 ¿Cuándo Contactar Soporte?</h2>
-<p>Contacte al soporte técnico si:</p>
-<ul>
-    <li>❌ El sistema no carga después de varios intentos</li>
-    <li>❌ Ve mensajes de error que no entiende</li>
-    <li>❌ Perdió datos importantes</li>
-    <li>❌ Su cuenta fue bloqueada</li>
-    <li>❌ Necesita cambiar su contraseña y no puede hacerlo</li>
-    <li>❌ Tiene dudas sobre cómo usar una funcionalidad</li>
-</ul>
-
-<!-- CAPÍTULO 12: SOPORTE TÉCNICO -->
-<h1>12. Soporte Técnico</h1>
-
-<h2>12.1 Canales de Soporte</h2>
-
-<h3>Soporte Interno</h3>
-<p>Para problemas relacionados con el uso del sistema:</p>
-<ul>
-    <li><strong>Administrador del Sistema:</strong> Primera línea de soporte</li>
-    <li><strong>Disponibilidad:</strong> En horario laboral del salón</li>
-    <li><strong>Tipo de consultas:</strong> Permisos, configuración, dudas de uso</li>
-</ul>
-
-<h3>Soporte Técnico</h3>
-<p>Para problemas técnicos y errores del sistema:</p>
-<ul>
-    <li><strong>Email:</strong> [Proporcionar email de soporte]</li>
-    <li><strong>Teléfono:</strong> [Proporcionar teléfono de soporte]</li>
-    <li><strong>Horario:</strong> [Especificar horario de atención]</li>
-</ul>
-
-<h2>12.2 Información para Reportar Problemas</h2>
-<p>Al contactar soporte, proporcione la siguiente información:</p>
-
-<ol>
-    <li><strong>Descripción del problema:</strong> Explique qué estaba haciendo cuando ocurrió</li>
-    <li><strong>Mensaje de error:</strong> Tome captura de pantalla si hay un mensaje</li>
-    <li><strong>Navegador y versión:</strong> Qué navegador usa y su versión</li>
-    <li><strong>Dispositivo:</strong> Computadora, tablet o móvil</li>
-    <li><strong>Hora del incidente:</strong> Cuándo ocurrió el problema</li>
-    <li><strong>Usuario afectado:</strong> Su email o rol en el sistema</li>
-</ol>
-
-<h2>12.3 Actualizaciones del Sistema</h2>
-
-<h3>Mantenimiento Programado</h3>
-<p>
-    El sistema puede tener períodos de mantenimiento programado, generalmente fuera del horario laboral. 
-    Será notificado con anticipación sobre estas actualizaciones.
-</p>
-
-<h3>Nuevas Funcionalidades</h3>
-<p>
-    Trinity se actualiza regularmente con nuevas funcionalidades y mejoras. Revise la sección de 
-    "Novedades" en el dashboard para estar al día.
-</p>
-
-<h2>12.4 Capacitación</h2>
-
-<h3>Capacitación Inicial</h3>
-<ul>
-    <li>Todos los nuevos usuarios reciben capacitación al ingresar</li>
-    <li>Duración aproximada: 2 horas</li>
-    <li>Incluye práctica guiada</li>
-</ul>
-
-<h3>Material de Apoyo</h3>
-<ul>
-    <li>Este manual de usuario (versión digital siempre actualizada)</li>
-    <li>Videos tutoriales (si están disponibles)</li>
-    <li>Guías rápidas por módulo</li>
-</ul>
-
-<h2>12.5 Retroalimentación y Sugerencias</h2>
-<p>
-    Sus comentarios son importantes para mejorar el sistema. Si tiene sugerencias de nuevas 
-    funcionalidades o mejoras, compártalas con el administrador o con el equipo de soporte.
-</p>
-
-<h2>12.6 Recursos Adicionales</h2>
-
-<h3>Base de Conocimientos</h3>
-<ul>
-    <li>Guías paso a paso para tareas comunes</li>
-    <li>Videos demostrativos</li>
-    <li>Preguntas frecuentes actualizadas</li>
-</ul>
-
-<h3>Actualizaciones y Novedades</h3>
-<p>
-    Consulte regularmente el dashboard para estar informado sobre nuevas funcionalidades y 
-    actualizaciones del sistema.
-</p>
-
-<!-- GLOSARIO -->
-<h1>Glosario de Términos</h1>
-
-<table>
-    <tr>
-        <th>Término</th>
-        <th>Definición</th>
-    </tr>
-    <tr>
-        <td><strong>Backend</strong></td>
-        <td>Parte del sistema que se ejecuta en el servidor y maneja la lógica y base de datos</td>
-    </tr>
-    <tr>
-        <td><strong>Cache</strong></td>
-        <td>Almacenamiento temporal de datos en el navegador para mejorar el rendimiento</td>
-    </tr>
-    <tr>
-        <td><strong>Dashboard</strong></td>
-        <td>Tablero principal que muestra un resumen de métricas importantes</td>
-    </tr>
-    <tr>
-        <td><strong>Frontend</strong></td>
-        <td>Interfaz visual con la que los usuarios interactúan</td>
-    </tr>
-    <tr>
-        <td><strong>JWT (JSON Web Token)</strong></td>
-        <td>Método de autenticación segura usado por el sistema</td>
-    </tr>
-    <tr>
-        <td><strong>Login</strong></td>
-        <td>Proceso de inicio de sesión en el sistema</td>
-    </tr>
-    <tr>
-        <td><strong>RBAC</strong></td>
-        <td>Control de Acceso Basado en Roles - sistema de permisos del software</td>
-    </tr>
-    <tr>
-        <td><strong>Responsive</strong></td>
-        <td>Diseño que se adapta a diferentes tamaños de pantalla</td>
-    </tr>
-    <tr>
-        <td><strong>Sidebar</strong></td>
-        <td>Barra lateral de navegación</td>
-    </tr>
-    <tr>
-        <td><strong>Token</strong></td>
-        <td>Clave de autenticación temporal que verifica la identidad del usuario</td>
-    </tr>
-</table>
-
-<!-- PIE DE PÁGINA -->
-<div class="footer">
-    <p><strong>TRINITY ESTÉTICA & SPA - Sistema de Gestión Integral</strong></p>
-    <p>Manual de Usuario - Versión 1.0</p>
-    <p>© 2025 Trinity Estética & SPA. Todos los derechos reservados.</p>
-    <p style="margin-top: 20px;">
-        Para soporte técnico o consultas, contacte a su administrador del sistema.
-    </p>
-</div>
-
+    <section class="hero">
+        <h1>TRINITY</h1>
+        <p><strong>Manual de Usuario</strong></p>
+        <p>Sistema web de gestión para salón de belleza</p>
+        <p>Versión académica y demostrativa</p>
+    </section>
+
+    <section class="card">
+        <h2>1. Introducción</h2>
+        <p>
+            TRINITY es una plataforma diseñada para centralizar la operación de un salón de belleza.
+            Permite gestionar clientes, servicios, citas, usuarios y reportes desde una sola interfaz.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2>2. Inicio de sesión</h2>
+        <p>Para entrar al sistema:</p>
+        <ol>
+            <li>Abra la aplicación en el navegador.</li>
+            <li>Ingrese su correo electrónico y contraseña.</li>
+            <li>Presione <strong>Iniciar sesión</strong>.</li>
+        </ol>
+
+        <div class="note">
+            Si el usuario está inactivo o las credenciales son incorrectas, el sistema mostrará un mensaje de error.
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>3. Roles del sistema</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rol</th>
+                    <th>Acceso principal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Administrador</td>
+                    <td>Control total del sistema, usuarios, servicios y reportes.</td>
+                </tr>
+                <tr>
+                    <td>Recepción</td>
+                    <td>Clientes, citas, servicios y reportes operativos.</td>
+                </tr>
+                <tr>
+                    <td>Estilista</td>
+                    <td>Consulta de citas asignadas y actualización de estado o notas.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>4. Módulos disponibles</h2>
+        <h3>Dashboard</h3>
+        <p>Resume métricas generales del salón, citas recientes, ingresos y desempeño del equipo.</p>
+
+        <h3>Clientes</h3>
+        <p>Permite registrar, editar, consultar y eliminar clientes cuando no tienen citas activas que lo impidan.</p>
+
+        <h3>Servicios</h3>
+        <p>Administra el catálogo de servicios, duración, precio, categoría y estado activo o inactivo.</p>
+
+        <h3>Citas</h3>
+        <p>Gestiona la agenda, asigna estilistas, vincula múltiples servicios y controla estados de atención.</p>
+
+        <h3>Usuarios</h3>
+        <p>Administra cuentas del sistema, roles, contraseñas y estado de acceso.</p>
+
+        <h3>Reportes</h3>
+        <p>Presenta indicadores y tablas exportables para ingresos, clientes frecuentes y comportamiento de citas.</p>
+    </section>
+
+    <section class="card">
+        <h2>5. Flujo básico de uso</h2>
+        <ol>
+            <li>Registrar servicios y usuarios necesarios.</li>
+            <li>Crear clientes.</li>
+            <li>Programar citas seleccionando estilista, fecha y servicios.</li>
+            <li>Actualizar el estado de la cita durante la atención.</li>
+            <li>Consultar reportes para seguimiento del negocio.</li>
+        </ol>
+    </section>
+
+    <section class="card">
+        <h2>6. Recomendaciones de operación</h2>
+        <ul>
+            <li>Verifique los datos del cliente antes de guardar.</li>
+            <li>Confirme que la cita tenga al menos un servicio asociado.</li>
+            <li>No desactive ni elimine al último administrador activo.</li>
+            <li>Use los reportes para revisar ingresos y servicios más solicitados.</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>7. Alcance actual y pendientes</h2>
+        <p>El sistema ya cubre el flujo principal de operación del proyecto académico.</p>
+        <p>También existe estructura inicial en base de datos para:</p>
+        <ul>
+            <li>inventario</li>
+            <li>ventas y POS</li>
+            <li>notificaciones</li>
+        </ul>
+        <p>Estos módulos todavía no cuentan con interfaz operativa completa.</p>
+    </section>
+
+    <section class="card">
+        <h2>8. Soporte técnico</h2>
+        <p>
+            Si el sistema no carga correctamente, revise que el backend, el frontend y la base de datos
+            local estén ejecutándose, y confirme que las variables de entorno estén configuradas.
+        </p>
+        <p>
+            Para entornos locales, el archivo <code>README.md</code> incluye los comandos necesarios para levantar el proyecto.
+        </p>
+    </section>
 </body>
 </html>

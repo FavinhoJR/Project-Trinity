@@ -1,5 +1,5 @@
-# Configuración completa para desplegar TRINITY en Render
-# Este archivo permite desplegar el backend y frontend automáticamente
+# Configuracion completa para desplegar TRINITY en Render
+# Este archivo permite desplegar el backend y frontend automaticamente
 
 services:
   # Backend API
@@ -47,7 +47,7 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        # Actualizar esta URL después de desplegar el backend
+        # Actualizar esta URL despues de desplegar el backend
         value: https://trinity-backend.onrender.com
 
 databases:
@@ -56,4 +56,3 @@ databases:
     user: trinity
     plan: free
     region: oregon
-
