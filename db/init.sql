@@ -155,18 +155,30 @@ FOR EACH ROW EXECUTE FUNCTION check_overlap_cita();
 -- 7) Datos basicos
 -- admin (usa tu hash bcrypt provisto)
 INSERT INTO users (email, password_hash, role, nombre)
-VALUES ('admin@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'admin', 'Administrador')
-ON CONFLICT (email) DO NOTHING;
+VALUES ('admin@trinity.local', '$2a$10$cKJq03q7FjeO39aj6NZ40eqdzKdzj82kdPr5OCbbpiLNuVBc6zU7C', 'admin', 'Administrador')
+ON CONFLICT (email) DO UPDATE
+SET password_hash = EXCLUDED.password_hash,
+    role = EXCLUDED.role,
+    nombre = EXCLUDED.nombre,
+    activo = true;
 
 -- un estilista para probar agenda
 INSERT INTO users (email, password_hash, role, nombre)
-VALUES ('stylist@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'estilista', 'Maria Estilista')
-ON CONFLICT (email) DO NOTHING;
+VALUES ('stylist@trinity.local', '$2a$10$cKJq03q7FjeO39aj6NZ40eqdzKdzj82kdPr5OCbbpiLNuVBc6zU7C', 'estilista', 'Maria Estilista')
+ON CONFLICT (email) DO UPDATE
+SET password_hash = EXCLUDED.password_hash,
+    role = EXCLUDED.role,
+    nombre = EXCLUDED.nombre,
+    activo = true;
 
 -- recepcionista de ejemplo
 INSERT INTO users (email, password_hash, role, nombre)
-VALUES ('recepcion@trinity.local', '$2a$10$uIWvEl.ksn3L6EikRIFN1.x54iF8zcEtbPRhkownZxKGJD4LE4h9y', 'recepcion', 'Ana Recepcion')
-ON CONFLICT (email) DO NOTHING;
+VALUES ('recepcion@trinity.local', '$2a$10$cKJq03q7FjeO39aj6NZ40eqdzKdzj82kdPr5OCbbpiLNuVBc6zU7C', 'recepcion', 'Ana Recepcion')
+ON CONFLICT (email) DO UPDATE
+SET password_hash = EXCLUDED.password_hash,
+    role = EXCLUDED.role,
+    nombre = EXCLUDED.nombre,
+    activo = true;
 
 -- clientes de ejemplo
 INSERT INTO clientes (nombre, telefono, email) VALUES
